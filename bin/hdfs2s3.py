@@ -1,15 +1,15 @@
 #!/usr/bin/python
 from __future__ import print_function
 
-#TITLE: dhfs2s3
-#AUTHORS: Elena Mishkina, Alexey Kuksin, Alex Pivovarov
+#TITLE: hdfs2s3
+#AUTHORS: Alexey Kuksin, Elena Mishkina, Alex Pivovarov
 #DATE: 2016-01-15
 #OBJECTIVE: Uploads files from HDFS to s3 object store
 
 # Script copies files from hdfs folders to s3 object store.
 # Follow the prompt's questions.
 # If you'd like to run script with input parameters the following order is expected:
-# ./hdfs2s3.py <HDFS root source folder> <s3 destination path> <s3 access_key> <s3 secret_key> <s3 writing option - update/overwrite>
+# ./hdfs2s3.py <HDFS root source folder> <s3 destination path> <s3 access_key> <s3 secret_key> <s3 writing option - update/overwrite> <execute/print>
 
 import os, sys, subprocess, re
 
@@ -17,19 +17,23 @@ import os, sys, subprocess, re
 prompt = '> '
 
 
-def exec_shell(command):
+def exec_shell(command, printOnly = ""):
 
    try:
 
-        print("Execute shell command: " + command )
+        print("Execute shell command:\n" + command )
 
-        process = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        if not ("print" in printOnly.lower()):
 
-        out, err =  process.communicate(command)
+            process = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
-        print("Exec Stdout: ", out,"\nExec Error:",err,"\n")
+            out, err =  process.communicate(command)
 
-        return out, err
+            print("Exec Stdout: ", out,"\nExec Error:",err,"\n")
+
+            return out, err
+
+        print("It's just a printed out example of expected command to be executed.")
 
    except:
 
@@ -67,7 +71,7 @@ class Usage(Exception):
 
 def main(argv=None):
 
-    hdfs_root_dir, s3_dest_path, s3_access_key, s3_secret_key, distcp_writing_option = "","","","",""
+    hdfs_root_dir, s3_dest_path, s3_access_key, s3_secret_key, distcp_writing_option, printOnly = "","","","","",""
 
     if argv is None:
 
@@ -77,7 +81,7 @@ def main(argv=None):
 
     try:
 
-        if len(argv) in range(3,7):
+        if len(argv) in range(3,8):
 
             try:
 
@@ -103,6 +107,10 @@ def main(argv=None):
 
                         distcp_writing_option = str(argv[5])
 
+                    if id == 6:
+
+                        printOnly = str(argv[6])
+
             except:
 
                 print("Unexpected error:", sys.exc_info())
@@ -111,17 +119,19 @@ def main(argv=None):
 
         else:
 
-           print("hadoop distcp will be applying for each subfloder starting from the root folder you specified. \nPlease answer questions below.")
+            print("hadoop distcp will be applying for each subfloder starting from the root folder you specified. \nPlease answer questions below.")
 
-           hdfs_root_dir = raw_input("Enter source HDFS root folder:\n" + prompt)
+            hdfs_root_dir = raw_input("Enter source HDFS root folder:\n" + prompt)
 
-           s3_dest_path = raw_input("Enter s3 destination root path without last slash :\n" + prompt)
+            s3_dest_path = raw_input("Enter s3 destination root path without last slash :\n" + prompt)
 
-           s3_access_key = raw_input("(Optional, just enter to ignore.) Enter s3 access_key:\n" + prompt)
+            s3_access_key = raw_input("(Optional, just enter to ignore.) Enter s3 access_key:\n" + prompt)
 
-           s3_secret_key = raw_input("(Optional, just enter to ignore.) Enter s3 secret key:\n" + prompt)
+            s3_secret_key = raw_input("(Optional, just enter to ignore.) Enter s3 secret key:\n" + prompt)
 
-           distcp_writing_option = raw_input("(Optional, just enter to ignore.) Enter s3 writing option - update/overwrite:\n" + prompt)
+            distcp_writing_option = raw_input("(Optional, just enter to ignore.) Enter s3 writing option - update/overwrite:\n" + prompt)
+
+            printOnly = raw_input("Would you like to execute commands or just print them out? - execute/print (Just enter to execute.):\n" + prompt)
 
         cmd = "hadoop distcp "
 
@@ -172,12 +182,12 @@ def main(argv=None):
 
                     distcp_command=cmd + "/"+line.rsplit('/')[-1].rstrip('\n') +" "+ s3_dest_path
 
-                exec_shell(distcp_command)
+                exec_shell(distcp_command,printOnly)
         else:
 
             distcp_command = cmd +  " " + s3_dest_path if len(distcp_writing_option) == 0 else cmd +  " " + s3_dest_path +"/" + hdfs_root_dir.rsplit('/')[-1].rstrip('\n')
 
-            exec_shell(distcp_command)
+            exec_shell(distcp_command, printOnly)
 
         print("Process done.")
 
