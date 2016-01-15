@@ -131,7 +131,7 @@ def main(argv=None):
 
             distcp_writing_option = raw_input("(Optional, just enter to ignore.) Enter s3 writing option - update/overwrite:\n" + prompt)
 
-            printOnly = raw_input("Would you like to execute commands or just print them out? - execute/print (Just enter to execute.):\n" + prompt)
+            printOnly = raw_input("(Optional, just enter to execute.) Would you like to execute commands or just print them out? - execute/print:\n" + prompt)
 
         cmd = "hadoop distcp "
 
