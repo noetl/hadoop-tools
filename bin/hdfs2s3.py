@@ -8,10 +8,9 @@ from __future__ import print_function
 
 # Script copies files from hdfs folders to s3 object store.
 # Follow the prompt's questions.
-# If you'd like to run script with input parameters the following order is expected:
-# ./hdfs2s3.py <HDFS root source folder> <s3 destination path> <s3 access_key> <s3 secret_key> <s3 writing option - update/overwrite> <execute/print>
-
-import os, sys, subprocess, re
+# If you'd like to run script with input parameters use --help to see available options:
+# ./hdfs2s3.py -h
+import os, sys, subprocess, re, argparse, json
 
 
 prompt = '> '
@@ -69,55 +68,32 @@ class Usage(Exception):
         self.msg = msg
 
 
-def main(argv=None):
+def main():
 
-    hdfs_root_dir, s3_dest_path, s3_access_key, s3_secret_key, distcp_writing_option, printOnly = "","","","","",""
+    parser = argparse.ArgumentParser()
 
-    if argv is None:
+    parser.add_argument("--hdfs_root_dir", help="hdfs_root_dir is a HDFS root source folder", default="")
 
-        argv = sys.argv
+    parser.add_argument("--s3_dest_path", help="s3_dest_path is a s3 destination path", default="")
 
-        print("Lenght of arguments is: ", len(argv) )
+    parser.add_argument("--s3_access_key", help="s3_access_key is an amazon account idenifier used to connect to S3 Bucket", default="")
+
+    parser.add_argument("--s3_secret_key", help="hdfs_root_dir is a kind of password for s3_access_key", default="")
+
+    parser.add_argument("--distcp_writing_option", help="distcp_writing_option is a hadoop distcp update/overwrite option", default="")
+
+    parser.add_argument("--print_only", help="print_only is a option to specifiy just print out or execute actual command", default="")
+
+    args = parser.parse_args()
+
+    print("Number of input arguments is: ", len(sys.argv),"\nGiven arguments are: ", json.dumps(vars(args), indent = 4))
+
+    hdfs_root_dir, s3_dest_path, s3_access_key, s3_secret_key, distcp_writing_option, print_only = \
+        args.hdfs_root_dir, args.s3_dest_path, args.s3_access_key, args.s3_secret_key, args.distcp_writing_option, args.print_only
 
     try:
 
-        if len(argv) in range(3,8):
-
-            try:
-
-                for id,val in enumerate(argv):
-
-                    if id == 1:
-
-                        hdfs_root_dir = str(argv[1])
-
-                    if id == 2:
-
-                        s3_dest_path = str(argv[2])
-
-                    if id == 3:
-
-                        s3_access_key = str(argv[3])
-
-                    if id == 4:
-
-                        s3_secret_key = str(argv[4])
-
-                    if id == 5:
-
-                        distcp_writing_option = str(argv[5])
-
-                    if id == 6:
-
-                        printOnly = str(argv[6])
-
-            except:
-
-                print("Unexpected error:", sys.exc_info())
-
-                sys.exit(0)
-
-        else:
+        if len(hdfs_root_dir) == 0 and len(s3_dest_path) == 0:
 
             print("hadoop distcp will be applying for each subfloder starting from the root folder you specified. \nPlease answer questions below.")
 
@@ -131,7 +107,7 @@ def main(argv=None):
 
             distcp_writing_option = raw_input("(Optional, just enter to ignore.) Enter s3 writing option - update/overwrite:\n" + prompt)
 
-            printOnly = raw_input("(Optional, just enter to execute.) Would you like to execute commands or just print them out? - execute/print:\n" + prompt)
+            print_only = raw_input("(Optional, just enter to execute.) Would you like to execute commands or just print them out? - execute/print:\n" + prompt)
 
         cmd = "hadoop distcp "
 
@@ -182,12 +158,12 @@ def main(argv=None):
 
                     distcp_command=cmd + "/"+line.rsplit('/')[-1].rstrip('\n') +" "+ s3_dest_path
 
-                exec_shell(distcp_command,printOnly)
+                exec_shell(distcp_command,print_only)
         else:
 
             distcp_command = cmd +  " " + s3_dest_path if len(distcp_writing_option) == 0 else cmd +  " " + s3_dest_path +"/" + hdfs_root_dir.rsplit('/')[-1].rstrip('\n')
 
-            exec_shell(distcp_command, printOnly)
+            exec_shell(distcp_command, print_only)
 
         print("Process done.")
 
