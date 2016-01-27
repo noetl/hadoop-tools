@@ -80,6 +80,14 @@ cat > mapred-site.xml << EOL
     <name>mapreduce.framework.name</name>
     <value>yarn</value>
   </property>
+  <property>
+    <name>mapreduce.jobhistory.address</name>
+    <value>${MASTER}:10020</value>
+  </property>
+  <property>
+    <name>mapreduce.jobhistory.webapp.address</name>
+    <value>${MASTER}:19888</value>
+  </property>
 </configuration>
 EOL
 
@@ -139,6 +147,10 @@ if [ "$mode" == "master" ]; then
   echo "Starting YARN resourcemanager...."
   /usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop start resourcemanager
   echo "Starting YARN resourcemanager done"
+
+  echo "Starting JobHistory server...."
+  /usr/lib/hadoop/sbin/mr-jobhistory-daemon.sh --config /usr/lib/hadoop/etc/hadoop start historyserver
+  echo "Starting JobHistory server done"
 else
   echo "Starting datanode...."
   /usr/lib/hadoop/sbin/hadoop-daemons.sh \
