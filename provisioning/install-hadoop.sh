@@ -1,15 +1,22 @@
 set -e
 
-if [ $# -ne 2 ]; then
-  echo "Usage: ./install-hadoop.sh <master_ip> <mode>"
-  echo "mode - master|slave"
+if [ $# -ne 1 ]; then
+  echo "Usage: ./install-hadoop.sh <master_ip>"
   exit -1
 fi
 
 MASTER=$1
-mode=$2
-echo $MASTER
-echo $mode
+
+myip=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
+
+mode="slave"
+if [ "$MASTER" == "$myip" ]; then
+  mode="master"
+fi
+
+echo "MASTER: $MASTER"
+echo "myip: $myip"
+echo "mode: $mode"
 
 echo "Installing JDK....."
 
@@ -23,9 +30,13 @@ java -version
 
 javac -version
 
+echo "Configuring SSH...."
 mkdir -p ~/.ssh
 
-echo "Configuring SSH...."
+ssh-keygen -f ~/.ssh/id_rsa  -t rsa -N ''
+
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+
 cat > ~/.ssh/config << EOL
 Host *.*.*.*
     StrictHostKeyChecking no
@@ -34,44 +45,6 @@ Host localhost
     StrictHostKeyChecking no
     UserKnownHostsFile=/dev/null
 EOL
-
-cat > ~/.ssh/id_rsa << EOL
------BEGIN RSA PRIVATE KEY-----
-MIIEpQIBAAKCAQEAtRGk9zNOhEDhRRlajNeVp2ely0p8xxO/tmMhdfCrYuPA+g4J
-sl9kXI5foIOoVt7JXNNWUixvldGASA0ydBwG5n589akWM7976JNN4hNEz/kuUEFG
-3d7ZxaRBoPaPPxnwExFJhMRAjPTdsA8+zmq5VbsJBrE2pCR4kNvjUC7avUXCN3AR
-hjxzBHJ/PB55H+E4kFpZrzdoKjK9ZlPHj06CV2TRg9LUReZld5R/iBR2OZlH16ig
-eyR4j7rhaG1j0JBcGigQ0+4a6cH1sLTFnOi4wZkwcHdanKydn6lp4uCF/ECESWXO
-rxzVT4hQdXL7E2LfkToznGJVdxrPFqnVrOLXqwIDAQABAoIBAQCoihXtazpobCPD
-N8hLVNgeDKIMSfc/LqjCUh9xMmW1FJ4poytvds9qP7PPKv1kbtcrqiOtNWNgJrOr
-XW1bGkNqBM63s33RCSmC4KocByeEFkL/vOMD3k0CZNQZyaaoa7JFbU/rXuleywYW
-vPoPFNQScpgCPK3Jt5Dp9WLu3c4JYfY/Bs8bfUZ6XigX6aOw7gBYiwL2dhrPMspj
-Y7ZoKlgGVrIeSnY/0X52qxPDpObSZq6oLgc0HYvclh1tz57Vcurw/YF7BRjR011Z
-p+x3UCUJQtMciKCk3hLC9u/QhXRYqN6JoMq39n1wjMsC7ac/bM6XzZ3tUQ0lxSCc
-ryFOkwcxAoGBAN+grf8NBZUOUTH+yiZhIo5VACaWpjtbrN/x4dGJ0efndZD3kjfr
-/awavPEs3g0v8UC4DCuqYYzQKHM3IxoEBSRu0rAF/VbfLJm/qMzz03pWgs95w/hD
-BER/9tW39TxL+i4tgFu+ia34m0gToYoVDzsjT72yuRoCeIe+3BTcYULvAoGBAM9H
-zJRwwJ2njPNXDjmjhMWd0LaTv8bmWlCMs3QpsROZIA52MVU58MnpzqQGQQ0GvvqM
-AYvUNTXzptWL20Can08ew0sHxn+bpEtG4Nro74YBkbCKv7eaDAbmZhA6ta9411cQ
-TuHrX9chTQ1rTtnyDBt1bUcTL7SkHwzGuHOMWAcFAoGBAN2bjHHQxLRmgL4LoOYR
-oj3sK/8RkWAHRDSUrdSJQDMQ4yeqvwKd4T+ZK53QeagV13zsJltrN8pkSYGLpURV
-sYbeL/lxphFdjgQ6sxuPkQWOD4ltQG+YcfUz3jcCWorLO/xg6O+BzUxSrgbqNU3x
-+qr/Hjl9kAMfabQTxmMB1XyPAoGBAMwa4isE/9X+B4ASKBK/nlzNMpil0kCz0Rji
-A08OQqyOqo8y+Q7398+K6AyBkAqYqvOha2BZ/G981boPdj0eRGKvYxR9uosrIlNx
-nrZQipME9oXFilTrXo5ozvWKKh94OWskxtgVYpE+3FWrZcCcZCmhrpI/JUmWFnEJ
-ONWmy4NVAoGAWVwkF6lMr5swEfBiAUK/EdKceD9L8hNGCtVlFeZHe0Iz91sqh8tz
-ZMFubMUA/kaM/cNqDlLztiMNRdHNbeELjiQmFvZ9KLX+69XxSDDaPL1XcRNjGnXB
-raDgE0/uaDI87PG1hCSw1DE9+8BNbUuavA0l/cmPQVYf3ofGBag88hc=
------END RSA PRIVATE KEY-----
-EOL
-
-cat > ~/.ssh/id_rsa.pub << EOL
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1EaT3M06EQOFFGVqM15WnZ6XLSnzHE7+2YyF18Kti48D6DgmyX2Rcjl+gg6hW3slc01ZSLG+V0YBIDTJ0HAbmfnz1qRYzv3vok03iE0TP+S5QQUbd3tnFpEGg9o8/GfATEUmExECM9N2wDz7OarlVuwkGsTakJHiQ2+NQLtq9RcI3cBGGPHMEcn88Hnkf4TiQWlmvN2gqMr1mU8ePToJXZNGD0tRF5mV3lH+IFHY5mUfXqKB7JHiPuuFobWPQkFwaKBDT7hrpwfWwtMWc6LjBmTBwd1qcrJ2fqWni4IX8QIRJZc6vHNVPiFB1cvsTYt+ROjOcYlV3Gs8WqdWs4ter root@localhost.localdomain
-EOL
-
-cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-
-chmod 600 ~/.ssh/id_rsa
 
 echo "Downloading Hadoop...."
 cd /usr/lib
@@ -120,6 +93,10 @@ cat > yarn-site.xml << EOL
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
   </property>
+  <property>
+    <name>yarn.nodemanager.hostname</name>
+    <value>${myip}</value>
+  </property>
 </configuration>
 EOL
 
@@ -137,9 +114,16 @@ cat > hdfs-site.xml << EOL
     <name>dfs.data.dir</name>
     <value>file:///hdfs/datanode</value>
   </property>
+  <property>
+    <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+    <value>false</value>
+  </property>
 </configuration>
 EOL
 
+echo "Stop and disable firewall"
+systemctl stop firewalld
+systemctl disable firewalld
 
 if [ "$mode" == "master" ]; then
   echo "Formatting HDFS...."
