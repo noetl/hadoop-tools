@@ -1,9 +1,19 @@
-MASTER=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
+set -e
+
+if [ $# -ne 2 ]; then
+  echo "Usage: ./install-hadoop.sh <master_ip> <mode>"
+  echo "mode - master|slave"
+  exit -1
+fi
+
+MASTER=$1
+mode=$2
 echo $MASTER
+echo $mode
 
 echo "Installing JDK....."
 
-yum install java-devel
+yum -y install java-devel
 
 echo "JDK Installation completed...."
 
@@ -12,6 +22,8 @@ echo "Installed java version is...."
 java -version
 
 javac -version
+
+mkdir -p ~/.ssh
 
 echo "Configuring SSH...."
 cat > ~/.ssh/config << EOL
@@ -53,7 +65,7 @@ raDgE0/uaDI87PG1hCSw1DE9+8BNbUuavA0l/cmPQVYf3ofGBag88hc=
 -----END RSA PRIVATE KEY-----
 EOL
 
-cat ~/.ssh/id_rsa.pub << EOL
+cat > ~/.ssh/id_rsa.pub << EOL
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1EaT3M06EQOFFGVqM15WnZ6XLSnzHE7+2YyF18Kti48D6DgmyX2Rcjl+gg6hW3slc01ZSLG+V0YBIDTJ0HAbmfnz1qRYzv3vok03iE0TP+S5QQUbd3tnFpEGg9o8/GfATEUmExECM9N2wDz7OarlVuwkGsTakJHiQ2+NQLtq9RcI3cBGGPHMEcn88Hnkf4TiQWlmvN2gqMr1mU8ePToJXZNGD0tRF5mV3lH+IFHY5mUfXqKB7JHiPuuFobWPQkFwaKBDT7hrpwfWwtMWc6LjBmTBwd1qcrJ2fqWni4IX8QIRJZc6vHNVPiFB1cvsTYt+ROjOcYlV3Gs8WqdWs4ter root@localhost.localdomain
 EOL
 
@@ -63,9 +75,9 @@ chmod 600 ~/.ssh/id_rsa
 
 echo "Downloading Hadoop...."
 cd /usr/lib
-sudo wget http://apache.mirrors.pair.com/hadoop/common/hadoop-2.6.3/hadoop-2.6.3.tar.gz
+wget http://apache.mirrors.pair.com/hadoop/common/hadoop-2.6.3/hadoop-2.6.3.tar.gz
 echo "Installing Hadoop...."
-tar xzf hadoop-2.6.3.tar.gz -C hadoop
+tar xzf hadoop-2.6.3.tar.gz
 mv hadoop-2.6.3 hadoop
 rm -rf hadoop-2.6.3.tar.gz
 
@@ -128,34 +140,40 @@ cat > hdfs-site.xml << EOL
 </configuration>
 EOL
 
-echo "Formatting HDFS...."
 
-/usr/lib/hadoop/bin/hdfs namenode -format
+if [ "$mode" == "master" ]; then
+  echo "Formatting HDFS...."
+  /usr/lib/hadoop/bin/hdfs namenode -format
+  echo "Formatting HDFS done"
 
-echo "Formatting HDFS... done"
+  echo "Starting namenode...."
+  /usr/lib/hadoop/sbin/hadoop-daemons.sh \
+    --config "/usr/lib/hadoop/etc/hadoop" \
+    --script "/usr/lib/hadoop/bin/hdfs" start namenode
+  echo "Starting namenode done"
 
-echo "Starting HDFS...."
-/usr/lib/hadoop/sbin/hadoop-daemons.sh \
-  --config "/usr/lib/hadoop/etc/hadoop" \
-  --script "/usr/lib/hadoop/bin/hdfs" start namenode
+  echo "Starting YARN resourcemanager...."
+  /usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop start resourcemanager
+  echo "Starting YARN resourcemanager done"
+else
+  echo "Starting datanode...."
+  /usr/lib/hadoop/sbin/hadoop-daemons.sh \
+    --config "/usr/lib/hadoop/etc/hadoop" \
+    --script "/usr/lib/hadoop/bin/hdfs" start datanode
+  echo "Starting datanode done"
 
-/usr/lib/hadoop/sbin/hadoop-daemons.sh \
-  --config "/usr/lib/hadoop/etc/hadoop" \
-  --script "/usr/lib/hadoop/bin/hdfs" start datanode
+  echo "Starting YARN nodemanager...."
+  /usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop start nodemanager
+  echo "Starting YARN nodemanager done"
+fi
 
-echo "Waiting for HDFS...."
-/usr/lib/hadoop/bin/hdfs dfsadmin -safemode wait
+# echo "Waiting for HDFS...."
+# /usr/lib/hadoop/bin/hdfs dfsadmin -safemode wait
 
-echo "Adding HDFS dirs...."
-/usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hadoop
-/usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hive
+# echo "Adding HDFS dirs...."
+# /usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hadoop
+# /usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hive
 
-echo "Starting YARN...."
-/usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop start resourcemanager
-
-/usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop start nodemanager
-echo "Starting YARN.... done"
-
-echo "Testng MR..."
-/usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.3.jar pi 10 1000
+# echo "Testng MR..."
+# /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.3.jar pi 10 1000
 
