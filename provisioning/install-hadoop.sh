@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 if [ $# -ne 1 ]; then
@@ -48,14 +49,16 @@ EOL
 
 echo "Downloading Hadoop...."
 cd /usr/lib
-wget http://apache.mirrors.pair.com/hadoop/common/hadoop-2.6.3/hadoop-2.6.3.tar.gz
+wget http://apache.mirrors.pair.com/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
 echo "Installing Hadoop...."
-tar xzf hadoop-2.6.3.tar.gz
-mv hadoop-2.6.3 hadoop
-rm -rf hadoop-2.6.3.tar.gz
+tar xzf hadoop-2.7.1.tar.gz
+mv hadoop-2.7.1 hadoop
+rm -rf hadoop-2.7.1.tar.gz
 
-mkdir -p /hdfs/namenode
-mkdir -p /hdfs/datanode
+mkdir -p /hdfs/name
+mkdir -p /hdfs/data
+mkdir -p /var/log/hadoop-yarn/containers
+mkdir -p /var/log/hadoop-yarn/apps
 
 echo "Configuring Hadoop...."
 
@@ -88,6 +91,18 @@ cat > mapred-site.xml << EOL
     <name>mapreduce.jobhistory.webapp.address</name>
     <value>${MASTER}:19888</value>
   </property>
+  <property>
+    <name>mapred.output.direct.EmrFileSystem</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>mapred.output.direct.NativeS3FileSystem</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>mapred.output.committer.class</name>
+    <value>org.apache.hadoop.mapred.DirectFileOutputCommitter</value>
+  </property>
 </configuration>
 EOL
 
@@ -105,6 +120,28 @@ cat > yarn-site.xml << EOL
     <name>yarn.nodemanager.hostname</name>
     <value>${myip}</value>
   </property>
+
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>yarn.log.server.url</name>
+    <value>http://${MASTER}:19888/jobhistory/logs</value>
+  </property>
+
+  <property>
+    <description>Where to store container logs.</description>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>/var/log/hadoop-yarn/containers</value>
+  </property>
+
+  <property>
+    <description>Where to aggregate logs to.</description>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/var/log/hadoop-yarn/apps</value>
+  </property>
 </configuration>
 EOL
 
@@ -115,12 +152,12 @@ cat > hdfs-site.xml << EOL
     <value>1</value>
   </property>
   <property>
-    <name>dfs.name.dir</name>
-    <value>file:///hdfs/namenode</value>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:///hdfs/name</value>
   </property>
   <property>
-    <name>dfs.data.dir</name>
-    <value>file:///hdfs/datanode</value>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:///hdfs/data</value>
   </property>
   <property>
     <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
@@ -170,6 +207,6 @@ fi
 # /usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hadoop
 # /usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hive
 
-# echo "Testng MR..."
-# /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.3.jar pi 10 1000
+# echo "Testing MR..."
+# /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar pi 10 1000
 

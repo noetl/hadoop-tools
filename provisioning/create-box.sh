@@ -1,4 +1,4 @@
-
+#!/bin/bash
 set -e
 
 if [ $# -ne 6 ]; then
@@ -16,26 +16,32 @@ mem_gb=$6
 groupid="c19748ac63dc4f3396765bed5e639344"
 networkid="24b8eb5774ad41209462c55f18aa5017"
 
+json="{'username':'${login}','password':'${pass}'}"
 
 # login
-btoken=$(curl -k -H "Content-Type: application/json" -X POST -d '{"username":"${login}","password":"${pass}"}' \
-https://api.ctl.io/v2/authentication/login \
-| jq -r '.bearerToken')
+btoken=`curl -k -H "Content-Type: application/json" -X POST -d ${json} https://api.ctl.io/v2/authentication/login | jq -r ".bearerToken"`
+
+echo "---------"
 echo $btoken
-
+echo "---------"
 # create box
-curl -k -H "Authorization: Bearer $btoken" -X POST -d '{
-  "name": "${box_name}",
-  "description": "${box_name}",
-  "groupId": "${groupid}",
-  "sourceServerId": "CENTOS-7-64-TEMPLATE",
-  "isManagedOS": false,
-  "networkId": "${networkid}",
-  "password": "${root_pass}",
-  "cpu": ${cpu},
-  "memoryGB": ${mem_gb},
-  "type": "standard",
-  "storageType": "standard"
-}' \
-https://api.ctl.io/v2/servers/NOMS/
+self_href=`curl -k -H "Authorization: Bearer $btoken" -X POST -d "{
+  'name': '${box_name}',
+  'description': '${box_name}',
+  'groupId': '${groupid}',
+  'sourceServerId': 'CENTOS-7-64-TEMPLATE',
+  'isManagedOS': false,
+  'networkId': '${networkid}',
+  'password': '${root_pass}',
+  'cpu': ${cpu},
+  'memoryGB': ${mem_gb},
+  'type': 'standard',
+  'storageType': 'standard'
+}" \
+https://api.ctl.io/v2/servers/NOMS/ | jq -r ".links[1].href"`
 
+echo "---------"
+echo $self_href
+echo "---------"
+
+curl -H "Authorization: Bearer $btoken" https://api.ctl.io${self_href}
