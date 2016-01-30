@@ -1,12 +1,14 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 1 ]; then
-  echo "Usage: ./install-hadoop.sh <master_ip>"
+if [ $# -ne 3 ]; then
+  echo "Usage: ./install-hadoop.sh <master_ip> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
 MASTER=$1
+AWS_ACCESS_KEY_ID=$2
+AWS_SECRET_ACCESS_KEY=$3
 
 myip=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
 
@@ -66,6 +68,7 @@ cd /usr/lib/hadoop/etc/hadoop
 
 cat >> hadoop-env.sh << EOL
 export JAVA_HOME=/usr/lib/jvm/java-openjdk
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
 EOL
 
 cat > core-site.xml << EOL
@@ -73,6 +76,30 @@ cat > core-site.xml << EOL
   <property>
     <name>fs.default.name</name>
     <value>hdfs://${MASTER}:8020</value>
+  </property>
+  <property>
+    <name>fs.s3.awsAccessKeyId</name>
+    <value>${AWS_ACCESS_KEY_ID}</value>
+  </property>
+  <property>
+    <name>fs.s3.awsSecretAccessKey</name>
+    <value>${AWS_SECRET_ACCESS_KEY}</value>
+  </property>
+  <property>
+    <name>fs.s3.impl</name>
+    <value>org.apache.hadoop.fs.s3.S3FileSystem</value>
+  </property>
+  <property>
+    <name>fs.s3n.awsAccessKeyId</name>
+    <value>${AWS_ACCESS_KEY_ID}</value>
+  </property>
+  <property>
+    <name>fs.s3n.awsSecretAccessKey</name>
+    <value>${AWS_SECRET_ACCESS_KEY}</value>
+  </property>
+  <property>
+    <name>fs.s3n.impl</name>
+    <value>org.apache.hadoop.fs.s3native.NativeS3FileSystem</value>
   </property>
 </configuration>
 EOL
@@ -165,6 +192,21 @@ cat > hdfs-site.xml << EOL
   </property>
 </configuration>
 EOL
+
+cat > jets3t.properties << EOL
+s3service.s3-endpoint=canada.os.ctl.io
+s3service.https-only=false
+EOL
+
+cat >> ~/.bashrc << EOL
+export HADOOP_HOME=/usr/lib/hadoop
+export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
+export PATH=$PATH:/usr/lib/hadoop/bin
+EOL
+
+cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/common/lib/
+cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/yarn/lib/
 
 echo "Stop and disable firewall"
 systemctl stop firewalld
