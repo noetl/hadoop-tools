@@ -6,23 +6,23 @@ if [ -z "$BTOKEN" ]; then
   exit -1
 fi
 
-if [ $# -ne 4 ]; then
-  echo "Usage: ./create-box.sh <box_name> <root_pass> <num_of_cpu> <mem_gb>"
+if [ $# -ne 5 ]; then
+  echo "Usage: ./create-server.sh <group_id> <box_name> <root_pass> <num_of_cpu> <mem_gb>"
   exit -1
 fi
 
-box_name=$1
-root_pass=$2
-cpu=$3
-mem_gb=$4
+groupid=$1
+box_name=$2
+root_pass=$3
+cpu=$4
+mem_gb=$5
 
-groupid="c19748ac63dc4f3396765bed5e639344"
 networkid="24b8eb5774ad41209462c55f18aa5017"
 
 echo "creating box...."
 
 # create box
-self_href=`curl -k -H "Authorization: Bearer $BTOKEN" -X POST -d "{
+self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "{
   'name': '${box_name}',
   'description': '${box_name}',
   'groupId': '${groupid}',
