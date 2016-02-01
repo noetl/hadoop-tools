@@ -51,7 +51,7 @@ EOL
 
 echo "Downloading Hadoop...."
 cd /usr/lib
-wget http://apache.mirrors.pair.com/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+wget -q http://apache.mirrors.pair.com/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
 echo "Installing Hadoop...."
 tar xzf hadoop-2.7.1.tar.gz
 mv hadoop-2.7.1 hadoop
@@ -68,7 +68,11 @@ cd /usr/lib/hadoop/etc/hadoop
 
 cat >> hadoop-env.sh << EOL
 export JAVA_HOME=/usr/lib/jvm/java-openjdk
-export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
+if [ "$HADOOP_CLASSPATH" ]; then
+  export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
+else
+  export HADOOP_CLASSPATH=/usr/lib/hadoop/share/hadoop/tools/lib/*
+fi
 EOL
 
 cat > core-site.xml << EOL
@@ -201,7 +205,6 @@ EOL
 cat >> ~/.bashrc << EOL
 export HADOOP_HOME=/usr/lib/hadoop
 export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
-export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
 export PATH=$PATH:/usr/lib/hadoop/bin
 EOL
 
@@ -242,13 +245,5 @@ else
   echo "Starting YARN nodemanager done"
 fi
 
-# echo "Waiting for HDFS...."
-# /usr/lib/hadoop/bin/hdfs dfsadmin -safemode wait
-
-# echo "Adding HDFS dirs...."
-# /usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hadoop
-# /usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hive
-
 # echo "Testing MR..."
 # /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar pi 10 1000
-

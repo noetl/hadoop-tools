@@ -12,14 +12,14 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Hive...."
 cd /usr/lib
-wget http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
+wget -q http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
 echo "Installing Hive...."
 tar xzf apache-hive-1.2.1-bin.tar.gz
-mv apache-hive-1.2.1-bin hive
+mv apache-hive-1.2.1-bin hive2
 rm -rf apache-hive-1.2.1-bin.tar.gz
 
 echo "Installing mysql-connector-java...."
-wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
+wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
 tar zxf mysql-connector-java-5.1.38.tar.gz
 cp mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/lib/hive/lib/
 rm -rf mysql-connector-java-5.1.38 zxf mysql-connector-java-5.1.38.tar.gz
@@ -59,7 +59,11 @@ cd /usr/lib/hive/conf
 cat > hive-env.sh << EOL
 export HADOOP_HOME=/usr/lib/hadoop
 export TEZ_CONF_DIR=/usr/lib/tez/conf
-export HADOOP_CLASSPATH=/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
+if [ "$HADOOP_CLASSPATH" ]; then
+  export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
+else
+  export HADOOP_CLASSPATH=/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
+fi
 EOL
 
 cat > hive-site.xml << EOL
@@ -100,7 +104,8 @@ echo "Configuring Hive done"
 # Tez
 echo "Installing Tez...."
 cd /usr/lib
-/usr/lib/hadoop/bin/hadoop fs -get s3n://nomis-amsterdam-backup/tez-0.8.2/*.tar.gz
+wget -q http://www.noetl.io/tez-0.8.2.tar.gz
+wget -q http://www.noetl.io/tez-0.8.2-minimal.tar.gz
 
 mkdir tez-full
 cd tez-full
@@ -141,7 +146,6 @@ EOL
 cat >> ~/.bashrc << EOL
 export HIVE_CONF_DIR=/usr/lib/hive/conf
 export TEZ_CONF_DIR=/usr/lib/tez/conf
-export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
 export PATH=$PATH:/usr/lib/hive/bin
 EOL
 
