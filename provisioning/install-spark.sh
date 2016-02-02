@@ -2,7 +2,7 @@
 set -e
 
 if [ $# -ne 0 ]; then
-  echo "Usage: ./install-hive.sh"
+  echo "Usage: ./install-spark.sh"
   exit -1
 fi
 
@@ -10,143 +10,50 @@ MASTER=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -
 
 echo "MASTER: $MASTER"
 
-echo "Downloading Hive...."
+echo "Downloading Spark...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
-echo "Installing Hive...."
-tar xzf apache-hive-1.2.1-bin.tar.gz
-mv apache-hive-1.2.1-bin hive2
-rm -rf apache-hive-1.2.1-bin.tar.gz
+wget -q http://download.nextag.com/apache/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
+echo "Installing Spark...."
+tar spark-1.6.0-bin-hadoop2.6.tgz
+mv spark-1.6.0-bin-hadoop2.6 spark
+rm -rf spark-1.6.0-bin-hadoop2.6.tgz
 
-echo "Installing mysql-connector-java...."
-wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
-tar zxf mysql-connector-java-5.1.38.tar.gz
-cp mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/lib/hive/lib/
-rm -rf mysql-connector-java-5.1.38 zxf mysql-connector-java-5.1.38.tar.gz
+mkdir -p /var/log/spark
 
-echo "Installing MySQL...."
-yum -y install mariadb-server
-echo "Installing MySQL done"
+/usr/lib/hadoop/bin/hadoop fs -mkdir -p /var/log/spark/apps
+/usr/lib/hadoop/bin/hadoop fs -chmod g+w /var/log/spark/apps
 
-echo "Starting MySQL...."
-systemctl start mariadb.service
-echo "Starting MySQL done"
+echo "Configuring Spark...."
 
-echo "Creating metastore DB..."
-cd /usr/lib/hive/scripts/metastore/upgrade/mysql
+cd /usr/lib/spark/conf
 
-cat > create_metastore.sql << EOL
-CREATE DATABASE metastore;
-USE metastore;
-SOURCE hive-schema-1.2.0.mysql.sql;
-CREATE USER 'hive'@'${MASTER}' IDENTIFIED BY 'hive';
-GRANT all on *.* to 'hive'@'$MASTER' identified by 'hive';
-flush privileges;
+cat > spark-env.sh << EOL
+export SPARK_HOME=${SPARK_HOME:-/usr/lib/spark}
+export SPARK_LOG_DIR=${SPARK_LOG_DIR:-/var/log/spark}
+export HADOOP_HOME=${HADOOP_HOME:-/usr/lib/hadoop}
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/usr/lib/hadoop/etc/hadoop}
+export HIVE_CONF_DIR=${HIVE_CONF_DIR:-/usr/lib/hive/conf}
 EOL
 
-mysql < create_metastore.sql
-echo "Creating metastore DB done"
-
-cd -
-
-/usr/lib/hadoop/bin/hadoop fs -mkdir -p /tmp /user/hive/warehouse
-/usr/lib/hadoop/bin/hadoop fs -chmod g+w /tmp /user/hive/warehouse
-
-echo "Configuring Hive...."
-
-cd /usr/lib/hive/conf
-
-cat > hive-env.sh << EOL
-export HADOOP_HOME=/usr/lib/hadoop
-export TEZ_CONF_DIR=/usr/lib/tez/conf
-if [ "$HADOOP_CLASSPATH" ]; then
-  export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
-else
-  export HADOOP_CLASSPATH=/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
-fi
+cat > spark-defaults.conf << EOL
+spark.master yarn
+spark.driver.extraClassPath   /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop/share/hadoop/common/lib/*:/usr/lib/hadoop/share/hadoop/yarn/lib/*:/usr/lib/hadoop/share/hadoop/tools/lib/*
+spark.executor.extraClassPath /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop/share/hadoop/common/lib/*:/usr/lib/hadoop/share/hadoop/yarn/lib/*:/usr/lib/hadoop/share/hadoop/tools/lib/*
+spark.eventLog.enabled true
+spark.eventLog.dir hdfs:///var/log/spark/apps
+spark.history.fs.logDirectory hdfs:///var/log/spark/apps
+spark.yarn.historyServer.address ${MASTER}:18080
+spark.history.ui.port 18080
+spark.shuffle.service.enabled true
+spark.driver.extraJavaOptions    -Dfile.encoding=UTF-8
+spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
 EOL
 
-cat > hive-site.xml << EOL
-<configuration>
-  <property>
-    <name>javax.jdo.option.ConnectionURL</name>
-    <value>jdbc:mysql://${MASTER}/metastore</value>
-  </property>
-  <property>
-    <name>javax.jdo.option.ConnectionDriverName</name>
-    <value>com.mysql.jdbc.Driver</value>
-  </property>
-  <property>
-    <name>javax.jdo.option.ConnectionUserName</name>
-    <value>hive</value>
-  </property>
-  <property>
-    <name>javax.jdo.option.ConnectionPassword</name>
-    <value>hive</value>
-  </property>
-  <property>
-    <name>hive.execution.engine</name>
-    <value>tez</value>
-  </property>
-  <property>
-    <name>hive.tez.container.size</name>
-    <value>1536</value>
-  </property>
-  <property>
-    <name>hive.tez.java.opts</name>
-    <value>-Xmx1120m -Xms1120m</value>
-  </property>
-</configuration>
-EOL
-
-echo "Configuring Hive done"
-
-# Tez
-echo "Installing Tez...."
-cd /usr/lib
-wget -q http://www.noetl.io/tez-0.8.2.tar.gz
-wget -q http://www.noetl.io/tez-0.8.2-minimal.tar.gz
-
-mkdir tez-full
-cd tez-full
-tar xzf ../tez-0.8.2.tar.gz
-cp /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/tools/lib/*aws* lib/
-
-cd ..
-mkdir tez
-cd tez
-tar xzf ../tez-0.8.2-minimal.tar.gz
-mkdir conf
-
-/usr/lib/hadoop/bin/hadoop fs -mkdir -p /apps/
-/usr/lib/hadoop/bin/hadoop fs -put /usr/lib/tez-full /apps/tez-0.8.2
-
-cd /usr/lib/tez/conf
-cat > tez-site.xml << EOL
-<configuration>
-   <property>
-      <name>tez.lib.uris</name>
-      <value>hdfs:///apps/tez-0.8.2/,hdfs:///apps/tez-0.8.2/lib/</value>
-   </property>
-   <property>
-    <name>tez.am.resource.memory.mb</name>
-    <value>1536</value>
-  </property>
-  <property>
-    <name>tez.task.resource.memory.mb</name>
-    <value>1536</value>
-  </property>
-  <property>
-    <name>tez.am.java.opts</name>
-    <value>-Xmx1120m -Xmx1120m</value>
-  </property>
-</configuration>
-EOL
+echo "Configuring Spark done"
 
 cat >> ~/.bashrc << EOL
-export HIVE_CONF_DIR=/usr/lib/hive/conf
-export TEZ_CONF_DIR=/usr/lib/tez/conf
-export PATH=$PATH:/usr/lib/hive/bin
+export SPARK_CONF_DIR=/usr/lib/spark/conf
+export PATH=$PATH:/usr/lib/spark/bin
 EOL
 
 source ~/.bashrc

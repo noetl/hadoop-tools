@@ -20,5 +20,7 @@ ssh root@10.101.124.31 'bash -s' < set-hostnames.sh
 ssh root@10.101.124.30 'bash -s' < install-hadoop.sh 10.101.124.30 <AWS_KEY> <AWS_SECRET_KEY>
 ssh root@10.101.124.31 'bash -s' < install-hadoop.sh 10.101.124.30 <AWS_KEY> <AWS_SECRET_KEY>
 
-ssh root@10.101.124.30 'bash -s' < install-hive.sh 
+ssh root@10.101.124.30 'bash -s' < install-spark.sh
+
+ssh root@10.101.124.30 'bash -s' < install-spark.sh
 ```
