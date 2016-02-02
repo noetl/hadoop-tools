@@ -15,7 +15,7 @@ cd /usr/lib
 wget -q http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
 echo "Installing Hive...."
 tar xzf apache-hive-1.2.1-bin.tar.gz
-mv apache-hive-1.2.1-bin hive
+mv apache-hive-1.2.1-bin hive2
 rm -rf apache-hive-1.2.1-bin.tar.gz
 
 echo "Installing mysql-connector-java...."
