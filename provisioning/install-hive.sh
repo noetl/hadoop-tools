@@ -118,6 +118,8 @@ cd tez
 tar xzf ../tez-0.8.2-minimal.tar.gz
 mkdir conf
 
+echo "Configuring Tez...."
+
 /usr/lib/hadoop/bin/hadoop fs -mkdir -p /apps/
 /usr/lib/hadoop/bin/hadoop fs -put /usr/lib/tez-full /apps/tez-0.8.2
 
@@ -142,6 +144,8 @@ cat > tez-site.xml << EOL
   </property>
 </configuration>
 EOL
+
+echo "Configuring Tez done"
 
 cat >> ~/.bashrc << EOL
 export HIVE_CONF_DIR=/usr/lib/hive/conf
