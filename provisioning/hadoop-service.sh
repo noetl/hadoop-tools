@@ -2,33 +2,29 @@
 set -e
 
 if [ $# -ne 2 ]; then
-  echo "Usage: ./install-hadoop.sh <master_ip> start/stop"
+  echo "Usage: ./hadoop-service.sh <master_hostname> start/stop"
   exit -1
 fi
 
 if [ "$2" == "stop" ] || [ "$2" == "start" ]; then
   echo "action $2"
 else
-  echo "Usage: ./install-hadoop.sh <master_ip> start/stop"
+  echo "Usage: ./hadoop-service.sh <master_hostname> start/stop"
   exit -1
 fi
 
 MASTER=$1
 action=$2
 
-if [ "$MASTER" == "$myip" ]; then
-  mode="master"
-fi
-
-myip=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
+my_hostname=`hostname`
 
 mode="slave"
-if [ "$MASTER" == "$myip" ]; then
+if [ "$MASTER" == "$my_hostname" ]; then
   mode="master"
 fi
 
 echo "MASTER: $MASTER"
-echo "myip: $myip"
+echo "my_hostname: $my_hostname"
 echo "mode: $mode"
 
 if [ "$mode" == "master" ]; then

@@ -37,3 +37,4 @@ for i in `seq 1 254`;do
 done
 
 echo "done"
+hostname

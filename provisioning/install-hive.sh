@@ -6,7 +6,7 @@ if [ $# -ne 0 ]; then
   exit -1
 fi
 
-MASTER=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
+MASTER=`hostname`
 
 echo "MASTER: $MASTER"
 

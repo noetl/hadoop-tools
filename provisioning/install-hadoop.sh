@@ -2,7 +2,7 @@
 set -e
 
 if [ $# -ne 3 ]; then
-  echo "Usage: ./install-hadoop.sh <master_ip> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+  echo "Usage: ./install-hadoop.sh <master_hostname> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
@@ -10,15 +10,15 @@ MASTER=$1
 AWS_ACCESS_KEY_ID=$2
 AWS_SECRET_ACCESS_KEY=$3
 
-myip=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
+my_hostname=`hostname`
 
 mode="slave"
-if [ "$MASTER" == "$myip" ]; then
+if [ "$MASTER" == "$my_hostname" ]; then
   mode="master"
 fi
 
 echo "MASTER: $MASTER"
-echo "myip: $myip"
+echo "my_hostname: $my_hostname"
 echo "mode: $mode"
 
 echo "Installing JDK....."
@@ -147,10 +147,6 @@ cat > yarn-site.xml << EOL
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
   </property>
-  <property>
-    <name>yarn.nodemanager.hostname</name>
-    <value>${myip}</value>
-  </property>
 
   <property>
     <name>yarn.log-aggregation-enable</name>
@@ -189,10 +185,6 @@ cat > hdfs-site.xml << EOL
   <property>
     <name>dfs.datanode.data.dir</name>
     <value>file:///hdfs/data</value>
-  </property>
-  <property>
-    <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
-    <value>false</value>
   </property>
 </configuration>
 EOL
