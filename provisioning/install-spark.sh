@@ -14,7 +14,7 @@ echo "Downloading Spark...."
 cd /usr/lib
 wget -q http://download.nextag.com/apache/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
 echo "Installing Spark...."
-tar spark-1.6.0-bin-hadoop2.6.tgz
+tar zxf spark-1.6.0-bin-hadoop2.6.tgz
 mv spark-1.6.0-bin-hadoop2.6 spark
 rm -rf spark-1.6.0-bin-hadoop2.6.tgz
 
@@ -37,8 +37,6 @@ EOL
 
 cat > spark-defaults.conf << EOL
 spark.master yarn
-spark.driver.extraClassPath   /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop/share/hadoop/common/lib/*:/usr/lib/hadoop/share/hadoop/yarn/lib/*:/usr/lib/hadoop/share/hadoop/tools/lib/*
-spark.executor.extraClassPath /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop/share/hadoop/common/lib/*:/usr/lib/hadoop/share/hadoop/yarn/lib/*:/usr/lib/hadoop/share/hadoop/tools/lib/*
 spark.eventLog.enabled true
 spark.eventLog.dir hdfs:///var/log/spark/apps
 spark.history.fs.logDirectory hdfs:///var/log/spark/apps
