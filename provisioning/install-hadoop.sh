@@ -68,8 +68,8 @@ cd /usr/lib/hadoop/etc/hadoop
 
 cat >> hadoop-env.sh << EOL
 export JAVA_HOME=/usr/lib/jvm/java-openjdk
-if [ "$HADOOP_CLASSPATH" ]; then
-  export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
+if [ "\$HADOOP_CLASSPATH" ]; then
+  export HADOOP_CLASSPATH=\$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
 else
   export HADOOP_CLASSPATH=/usr/lib/hadoop/share/hadoop/tools/lib/*
 fi

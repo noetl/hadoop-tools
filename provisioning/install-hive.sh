@@ -59,8 +59,8 @@ cd /usr/lib/hive/conf
 cat > hive-env.sh << EOL
 export HADOOP_HOME=/usr/lib/hadoop
 export TEZ_CONF_DIR=/usr/lib/tez/conf
-if [ "$HADOOP_CLASSPATH" ]; then
-  export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
+if [ "\$HADOOP_CLASSPATH" ]; then
+  export HADOOP_CLASSPATH=\$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
 else
   export HADOOP_CLASSPATH=/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
 fi
