@@ -145,7 +145,12 @@ cat > yarn-site.xml << EOL
   </property>
   <property>
     <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
+    <value>mapreduce_shuffle,spark_shuffle</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.aux-services.spark_shuffle.class</name>
+    <value>org.apache.spark.network.yarn.YarnShuffleService</value>
   </property>
 
   <property>
@@ -200,8 +205,13 @@ export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 export PATH=$PATH:/usr/lib/hadoop/bin
 EOL
 
+mkdir /usr/lib/hadoop-s3
 cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/common/lib/
 cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/yarn/lib/
+cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop-s3/
+
+# Spark shuffle service jar
+wget -q http://fostercitylab.crabdance.com/usb/spark-1.6.0-yarn-shuffle.jar -P /usr/lib/hadoop/share/hadoop/yarn/lib
 
 echo "Stop and disable firewall"
 systemctl stop firewalld

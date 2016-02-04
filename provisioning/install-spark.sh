@@ -45,6 +45,8 @@ spark.history.ui.port 18080
 spark.shuffle.service.enabled true
 spark.driver.extraJavaOptions    -Dfile.encoding=UTF-8
 spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
+spark.driver.extraClassPath     /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
+spark.executor.extraClassPath   /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
 EOL
 
 echo "Configuring Spark done"

@@ -50,6 +50,5 @@ else
 
   echo "${action}ing YARN nodemanager...."
   /usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop $action nodemanager
-  echo "${action}ing
-   YARN nodemanager done"
+  echo "${action}ing YARN nodemanager done"
 fi

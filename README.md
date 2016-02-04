@@ -26,3 +26,12 @@ ssh root@10.101.124.30 'bash -s' < install-hive.sh
 
 ssh root@10.101.124.30 'bash -s' < install-spark.sh
 ```
+
+# start/stop hadoop
+```
+ssh root@10.101.124.31 'bash -s' < hadoop-service ip-10-101-124-30 stop
+ssh root@10.101.124.30 'bash -s' < hadoop-service ip-10-101-124-30 stop
+
+ssh root@10.101.124.30 'bash -s' < hadoop-service ip-10-101-124-30 start
+ssh root@10.101.124.31 'bash -s' < hadoop-service ip-10-101-124-30 start
+```
