@@ -19,8 +19,6 @@ mem_gb=$5
 
 networkid="24b8eb5774ad41209462c55f18aa5017"
 
-echo "creating box...."
-
 # create box
 self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "{
   'name': '${box_name}',
@@ -37,8 +35,6 @@ self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: appli
 }" \
 https://api.ctl.io/v2/servers/NOMS/ | jq -r ".links[1].href"`
 
-echo "---------------------------------------------"
 echo $self_href
-echo "---------------------------------------------"
 
 # curl -H "Authorization: Bearer $btoken" https://api.ctl.io${self_href}
