@@ -57,3 +57,7 @@ export PATH=$PATH:/usr/lib/spark/bin
 EOL
 
 source ~/.bashrc
+
+echo "Starting spark history server...."
+/usr/lib/spark/sbin/start-history-server.sh
+echo "Starting spark history server done"
