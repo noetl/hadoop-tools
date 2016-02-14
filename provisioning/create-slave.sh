@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ $# -ne 6 ]; then
   echo "Usage: ./create-slave.sh <login> <password> <group_hash> <master_hostname> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
@@ -15,13 +17,17 @@ AWS_SECRET_ACCESS_KEY=$6
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 $DIR/login.sh $login $password
+echo "Running create-server.sh"
 server_url=`$DIR/create-server.sh $group_hash dn2 Nomis123 2 8`
 echo "server_url: $server_url"
 
+echo "Getting ip address..."
+set +e
 is_ip=0
 while [ $is_ip == 0 ]; do
   echo "sleep 30"
   sleep 30
+  echo "Running get-ip.sh"
   ip=`$DIR/get-ip.sh $server_url`
   echo "ip: $ip"
   if [[ $ip =~ ^\"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\"$ ]]; then
