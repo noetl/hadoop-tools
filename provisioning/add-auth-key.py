@@ -2,8 +2,8 @@ import os
 import paramiko
 import sys
 
-server_ip=sys.argv(0)
-passw=sys.argv(1)
+server_ip=sys.argv[1]
+passw=sys.argv[2]
 
 home=os.path.expanduser('~')
 with open(home + "/.ssh/id_rsa.pub") as f:
