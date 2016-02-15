@@ -10,7 +10,7 @@ with open(home + "/.ssh/id_rsa.pub") as f:
     content = f.readlines()
 
 pub_key=content[0]
-paramiko.util.log_to_file('ssh.log') # sets up logging
+#paramiko.util.log_to_file('ssh.log') # sets up logging
 
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())

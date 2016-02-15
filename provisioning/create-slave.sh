@@ -2,23 +2,25 @@
 
 set -e
 
-if [ $# -ne 6 ]; then
-  echo "Usage: ./create-slave.sh <login> <password> <group_hash> <master_hostname> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 8 ]; then
+  echo "Usage: ./create-slave.sh <group_hash> <master_hostname> <slave_name> <cpu> <mem> <root_password> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
-login=$1
-password=$2
-group_hash=$3
-master=$4
-AWS_ACCESS_KEY_ID=$5
-AWS_SECRET_ACCESS_KEY=$6
+group_hash=$1
+master=$2
+slave_name=$3
+slave_cpu=$4
+slave_mem=$5
+root_password=$6
+AWS_ACCESS_KEY_ID=$7
+AWS_SECRET_ACCESS_KEY=$8
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-$DIR/login.sh $login $password
 echo "Running create-server.sh"
-server_url=`$DIR/create-server.sh $group_hash dn2 Nomis123 2 8`
+echo "$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem"
+server_url=`$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem`
 echo "server_url: $server_url"
 
 echo "Getting ip address..."
@@ -41,7 +43,7 @@ echo "final ip: $ip"
 set -e
 
 echo "Adding pub key to authorized_keys on server"
-python $DIR/add-auth-key.py $ip Nomis123
+python $DIR/add-auth-key.py $ip $root_password
 echo "done"
 
 echo "Copying provisioning scripts to $ip"
