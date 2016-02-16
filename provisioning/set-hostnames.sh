@@ -8,9 +8,10 @@ set -e
 # 10.101.124.3 ip-10-101-124-3
 # etc.
 
-myip=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
 if [ $# -eq 1 ]; then
   myip=$1
+else
+  myip=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`
 fi
 
 if [ -z "$myip" ]; then
