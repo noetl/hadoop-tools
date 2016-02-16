@@ -24,8 +24,16 @@ tar zxf mysql-connector-java-5.1.38.tar.gz
 cp mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/lib/hive/lib/
 rm -rf mysql-connector-java-5.1.38 zxf mysql-connector-java-5.1.38.tar.gz
 
+# Try to install software using yum. For some reason first attempt might fail
 echo "Installing MySQL...."
+set +e
 yum -y install mariadb-server
+if [ $? -ne 0 ]; then
+  sleep 10
+  set -e
+  yum -y install mariadb-server
+fi
+set -e
 echo "Installing MySQL done"
 
 echo "Starting MySQL...."
@@ -150,7 +158,5 @@ echo "Configuring Tez done"
 cat >> ~/.bashrc << EOL
 export HIVE_CONF_DIR=/usr/lib/hive/conf
 export TEZ_CONF_DIR=/usr/lib/tez/conf
-export PATH=$PATH:/usr/lib/hive/bin
+export PATH=\$PATH:/usr/lib/hive/bin
 EOL
-
-source ~/.bashrc

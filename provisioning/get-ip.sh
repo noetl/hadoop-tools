@@ -13,4 +13,4 @@ fi
 
 box_href=$1
 
-curl -H "Authorization: Bearer $BTOKEN" https://api.ctl.io${box_href} | jq ".details.ipAddresses[].internal"
+curl -s -H "Authorization: Bearer $BTOKEN" https://api.ctl.io${box_href} | jq ".details.ipAddresses[].internal"

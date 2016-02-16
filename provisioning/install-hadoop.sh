@@ -21,10 +21,16 @@ echo "MASTER: $MASTER"
 echo "my_hostname: $my_hostname"
 echo "mode: $mode"
 
+# Try to install software using yum. For some reason first attempt might fail
 echo "Installing JDK....."
-
+set +e
 yum -y install java-devel
-
+if [ $? -ne 0 ]; then
+  sleep 10
+  set -e
+  yum -y install java-devel
+fi
+set -e
 echo "JDK Installation completed...."
 
 echo "Installed java version is...."
@@ -202,7 +208,7 @@ EOL
 cat >> ~/.bashrc << EOL
 export HADOOP_HOME=/usr/lib/hadoop
 export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
-export PATH=$PATH:/usr/lib/hadoop/bin
+export PATH=\$PATH:/usr/lib/hadoop/bin
 EOL
 
 mkdir /usr/lib/hadoop-s3

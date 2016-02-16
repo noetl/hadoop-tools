@@ -2,8 +2,8 @@
 
 set -e
 
-if [ $# -ne 11 ]; then
-  echo "Usage: ./create-cluster.sh <ctl_login> <ctl_password> <group_name> <N_of_boxes> <master_cpu> <master_mem> <slave_cpu> <slave_mem> <root_passwoed> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 12 ]; then
+  echo "Usage: ./create-cluster.sh <ctl_login> <ctl_password> <group_name> <parent_group_id> <N_of_boxes> <master_cpu> <master_mem> <slave_cpu> <slave_mem> <root_passwoed> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
@@ -11,25 +11,41 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ctl_login=$1
 ctl_password=$2
 group_name=$3
-N=$4
-master_cpu=$5
-master_mem=$6
-slave_cpu=$7
-slave_mem=$8
-root_password=$9
-AWS_ACCESS_KEY_ID=$10
-AWS_SECRET_ACCESS_KEY=$11
+parent_group_id=$4
+N=$5
+master_cpu=$6
+master_mem=$7
+slave_cpu=$8
+slave_mem=$9
+root_password=${10}
+AWS_ACCESS_KEY_ID=${11}
+AWS_SECRET_ACCESS_KEY=${12}
+
+echo "-----------------------------------------------"
+echo "ctl_login:             $ctl_login"
+echo "ctl_password:          $ctl_password"
+echo "group_name:            $group_name"
+echo "parent_group_id:       $parent_group_id"
+echo "Number of slaves:      $N"
+echo "master_cpu:            $master_cpu"
+echo "master_mem:            $master_mem"
+echo "slave_cpu:             $slave_cpu"
+echo "slave_mem:             $slave_mem"
+echo "root_password          $root_password"
+echo "AWS_ACCESS_KEY_ID:     ${AWS_ACCESS_KEY_ID}"
+echo "AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}"
+echo "-----------------------------------------------"
 
 echo "Running login.sh"
 . $DIR/login.sh $ctl_login $ctl_password
 echo "done"
 
 echo "Running create-group.sh"
-group_hash=`$DIR/create-group.sh $group_name`
-echo "done $group_hash"
+group_id=`$DIR/create-group.sh $group_name $parent_group_id`
+echo "group_id: $group_id"
 
 echo "Running create-server.sh"
-server_url=`$DIR/create-server.sh $group_hash dn2 Nomis123 2 8`
+server_url=`$DIR/create-server.sh $group_id dn2 Nomis123 2 8`
 echo "server_url: $server_url"
 
 echo "Getting ip address..."
@@ -77,12 +93,11 @@ cmd="nohup /root/provisioning/install-master-soft.sh ${AWS_ACCESS_KEY_ID} ${AWS_
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
 
-# CREATE SLAVES
-
 mkdir -p $DIR/../log
 
+# CREATE SLAVES
 for i in `seq 1 $N`; do
-  cmd="$DIR/create-slave.sh $group_hash $master_hostname dn$i $slave_cpu $slave_mem $root_password $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
+  cmd="$DIR/create-slave.sh $group_id $master_hostname dn$i $slave_cpu $slave_mem $root_password $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
   nohup $cmd > $DIR/../log/create-slave-$group_name-$i.out 2>&1 < /dev/null &
 done
 

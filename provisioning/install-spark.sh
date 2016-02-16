@@ -53,10 +53,8 @@ echo "Configuring Spark done"
 
 cat >> ~/.bashrc << EOL
 export SPARK_CONF_DIR=/usr/lib/spark/conf
-export PATH=$PATH:/usr/lib/spark/bin
+export PATH=\$PATH:/usr/lib/spark/bin
 EOL
-
-source ~/.bashrc
 
 echo "Starting spark history server...."
 /usr/lib/spark/sbin/start-history-server.sh

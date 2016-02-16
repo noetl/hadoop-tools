@@ -11,7 +11,7 @@ if [ $# -ne 5 ]; then
   exit -1
 fi
 
-groupid=$1
+group_id=$1
 box_name=$2
 root_pass=$3
 cpu=$4
@@ -23,7 +23,7 @@ networkid="24b8eb5774ad41209462c55f18aa5017"
 self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "{
   'name': '${box_name}',
   'description': '${box_name}',
-  'groupId': '${groupid}',
+  'groupId': '${group_id}',
   'sourceServerId': 'CENTOS-7-64-TEMPLATE',
   'isManagedOS': false,
   'networkId': '${networkid}',
