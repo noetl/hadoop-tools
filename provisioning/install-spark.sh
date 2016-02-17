@@ -1,10 +1,20 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 0 ]; then
-  echo "Usage: ./install-spark.sh"
+if [ $# -ne 2 ]; then
+  echo "Usage: ./install-spark.sh <N_of_boxes> <slave_mem>"
   exit -1
 fi
+
+N=$1
+slave_mem=$2
+
+# give 50% of cluster resources to Spark
+exec_inst=$[$N/2]
+
+yarn_mem=$[$slave_mem*1024*87/100]
+spark_mem=$[yarn_mem-896]
+exec_mem=$[$spark_mem*10/11]
 
 MASTER=`hostname`
 
@@ -47,6 +57,8 @@ spark.driver.extraJavaOptions    -Dfile.encoding=UTF-8
 spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
 spark.driver.extraClassPath     /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
 spark.executor.extraClassPath   /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
+spark.executor.instances    ${exec_inst}
+spark.executor.memory       ${exec_mem}m
 EOL
 
 echo "Configuring Spark done"

@@ -6,8 +6,8 @@ if [ -z "$BTOKEN" ]; then
   exit -1
 fi
 
-if [ $# -ne 5 ]; then
-  echo "Usage: ./create-server.sh <group_id> <box_name> <root_pass> <num_of_cpu> <mem_gb>"
+if [ $# -ne 6 ]; then
+  echo "Usage: ./create-server.sh <group_id> <box_name> <root_pass> <num_of_cpu> <mem_gb> <network_id>"
   exit -1
 fi
 
@@ -16,8 +16,7 @@ box_name=$2
 root_pass=$3
 cpu=$4
 mem_gb=$5
-
-networkid="24b8eb5774ad41209462c55f18aa5017"
+network_id=$6
 
 # create box
 self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "{
@@ -26,7 +25,7 @@ self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: appli
   'groupId': '${group_id}',
   'sourceServerId': 'CENTOS-7-64-TEMPLATE',
   'isManagedOS': false,
-  'networkId': '${networkid}',
+  'networkId': '${network_id}',
   'password': '${root_pass}',
   'cpu': ${cpu},
   'memoryGB': ${mem_gb},

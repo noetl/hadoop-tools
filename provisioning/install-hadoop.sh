@@ -1,14 +1,17 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 3 ]; then
-  echo "Usage: ./install-hadoop.sh <master_hostname> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 4 ]; then
+  echo "Usage: ./install-hadoop.sh <master_hostname> <slave_mem> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
 MASTER=$1
-AWS_ACCESS_KEY_ID=$2
-AWS_SECRET_ACCESS_KEY=$3
+slave_mem=$2
+AWS_ACCESS_KEY_ID=$3
+AWS_SECRET_ACCESS_KEY=$4
+
+yarn_mem=$[$slave_mem*1024*87/100]
 
 my_hostname=`hostname`
 
@@ -180,6 +183,22 @@ cat > yarn-site.xml << EOL
     <name>yarn.nodemanager.remote-app-log-dir</name>
     <value>/var/log/hadoop-yarn/apps</value>
   </property>
+
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>1</value>
+  </property>
+
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>${yarn_mem}</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>${yarn_mem}</value>
+  </property>
+
 </configuration>
 EOL
 

@@ -2,13 +2,15 @@
 
 set -e
 
-if [ $# -ne 2 ]; then
-  echo "Usage: ./install-master-soft.sh <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 4 ]; then
+  echo "Usage: ./install-master-soft.sh <N_of_boxes> <slave_mem> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
-AWS_ACCESS_KEY_ID=$1
-AWS_SECRET_ACCESS_KEY=$2
+N=$1
+slave_mem=$2
+AWS_ACCESS_KEY_ID=$3
+AWS_SECRET_ACCESS_KEY=$4
 
 LOG_DIR="/root"
 DIR="/root/provisioning"
@@ -17,12 +19,12 @@ master=`hostname`
 
 # Install Hadoop
 echo "Installing Hadoop..."
-$DIR/install-hadoop.sh ${master} ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > $LOG_DIR/install-hadoop.log 2>&1
+$DIR/install-hadoop.sh ${master} $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > $LOG_DIR/install-hadoop.log 2>&1
 echo "done"
 
 # Install Spark
 echo "Installing Spark..."
-$DIR/install-spark.sh > $LOG_DIR/install-spark.log 2>&1
+$DIR/install-spark.sh $N $slave_mem > $LOG_DIR/install-spark.log 2>&1
 echo "done"
 
 # Install Spark Jobserver

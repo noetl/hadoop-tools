@@ -2,8 +2,8 @@
 
 set -e
 
-if [ $# -ne 8 ]; then
-  echo "Usage: ./create-slave.sh <group_hash> <master_hostname> <slave_name> <cpu> <mem> <root_password> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 9 ]; then
+  echo "Usage: ./create-slave.sh <group_hash> <master_hostname> <slave_name> <slave_cpu> <slave_mem> <root_password> <network_id> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
@@ -13,14 +13,15 @@ slave_name=$3
 slave_cpu=$4
 slave_mem=$5
 root_password=$6
-AWS_ACCESS_KEY_ID=$7
-AWS_SECRET_ACCESS_KEY=$8
+network_id=$7
+AWS_ACCESS_KEY_ID=$8
+AWS_SECRET_ACCESS_KEY=$9
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Running create-server.sh"
-echo "$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem"
-server_url=`$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem`
+echo "$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem $network_id"
+server_url=`$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem $network_id`
 echo "server_url: $server_url"
 
 echo "Getting ip address..."
@@ -56,6 +57,6 @@ ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
 
 echo "Running install-hadoop.sh"
-cmd="nohup /root/provisioning/install-hadoop.sh ${master} ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > install-hadoop.log 2>&1 < /dev/null &"
+cmd="nohup /root/provisioning/install-hadoop.sh ${master} $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > install-hadoop.log 2>&1 < /dev/null &"
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
