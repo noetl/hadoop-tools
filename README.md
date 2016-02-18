@@ -1,4 +1,6 @@
 # hadoop-tools
+
+[![Join the chat at https://gitter.im/noetl/hadoop-tools](https://badges.gitter.im/noetl/hadoop-tools.svg)](https://gitter.im/noetl/hadoop-tools?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 tools and scripts to maintain hadoop &amp; spark environment
 
 # create cluster
