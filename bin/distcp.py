@@ -70,14 +70,14 @@ def add_cmd(cmd, args):
         sys.exit(-1)
 
 
-def exec_shell(command, print_only = "", call_type="pipe", shell=True):
+def exec_shell(command, print_only = False, call_type="pipe", shell=True):
 
    try:
 
         print("Execute shell command:\n" + command + "\nIt's just a printed out example of expected command to be executed." \
-                  if "print" in print_only.lower() else command)
+                  if print_only else command)
 
-        if not("print" in print_only.lower()):
+        if not(print_only):
 
             if "pipe" in call_type:
 
@@ -312,8 +312,10 @@ def main():
 
             def evaluate_uri(src_uri , uri, dst_uri, uri_type):
 
-                    return src_uri + "/" + uri.split("/")[-1] + " " + dst_uri + src_uri  \
-                        if uri_type else uri + " " + dst_uri + "/" + re.sub("^(hdfs:///|s3://|s3n://|/)","", uri)
+                    #print("evaluate_uri:\nsrc_uri: ",src_uri,"\nuri: ",uri,"\ndst_uri: ",dst_uri,"\nuri_type: ",uri_type)
+
+                    return src_uri + "/" + uri.split("/")[-1] + " " + dst_uri + "/" + uri.split("/")[-1]  \
+                        if uri_type else uri + " " + dst_uri + "/" + uri.split("/")[-1] # re.sub("^(hdfs:///|s3://|s3n://|/)","", uri.split("/")[-1] )
 
             out, err, exit_code = exec_shell("hadoop fs -ls  " + src_uri)
 
@@ -326,7 +328,7 @@ def main():
 
                     for uri, uri_type  in dir_list.iteritems():
 
-                        exec_shell(add_cmd("hadoop distcp", args) + " " + evaluate_uri(src_uri , uri, dst_uri, uri_type) )
+                        exec_shell(add_cmd("hadoop distcp", args) + " " + evaluate_uri(src_uri , uri, dst_uri, uri_type),args.print )
 
         print("Process done.")
 
