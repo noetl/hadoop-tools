@@ -10,7 +10,7 @@ N=$1
 slave_mem=$2
 
 # give 50% of cluster resources to Spark
-exec_inst=$[$N/2]
+exec_inst=$[1+($N-1)/2]
 
 yarn_mem=$[$slave_mem*1024*87/100]
 spark_mem=$[yarn_mem-896]
@@ -29,9 +29,10 @@ mv spark-1.6.0-bin-hadoop2.6 spark
 rm -rf spark-1.6.0-bin-hadoop2.6.tgz
 
 mkdir -p /var/log/spark
+chown hadoop:hadoop /var/log/spark
 
-/usr/lib/hadoop/bin/hadoop fs -mkdir -p /var/log/spark/apps
-/usr/lib/hadoop/bin/hadoop fs -chmod g+w /var/log/spark/apps
+su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /var/log/spark/apps'
+su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod g+w /var/log/spark/apps'
 
 echo "Configuring Spark...."
 
@@ -63,11 +64,11 @@ EOL
 
 echo "Configuring Spark done"
 
-cat >> ~/.bashrc << EOL
+su - hadoop -c 'cat >> ~/.bashrc << EOL
 export SPARK_CONF_DIR=/usr/lib/spark/conf
 export PATH=\$PATH:/usr/lib/spark/bin
-EOL
+EOL'
 
 echo "Starting spark history server...."
-/usr/lib/spark/sbin/start-history-server.sh
+su - hadoop -c '/usr/lib/spark/sbin/start-history-server.sh'
 echo "Starting spark history server done"
