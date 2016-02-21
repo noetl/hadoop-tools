@@ -26,11 +26,11 @@ echo "mode: $mode"
 
 echo "Downloading Hadoop...."
 cd /usr/lib
-wget -q http://apache.mirrors.pair.com/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+wget -q http://apache.mirrors.pair.com/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz
 echo "Installing Hadoop...."
-tar xzf hadoop-2.7.1.tar.gz
-mv hadoop-2.7.1 hadoop
-rm -rf hadoop-2.7.1.tar.gz
+tar xzf hadoop-2.7.2.tar.gz
+mv hadoop-2.7.2 hadoop
+rm -rf hadoop-2.7.2.tar.gz
 
 mkdir -p /hdfs/name
 mkdir -p /hdfs/data
@@ -256,4 +256,4 @@ export PATH=\$PATH:/usr/lib/hadoop/bin
 EOL'
 
 # echo "Testing MR..."
-# /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar pi 10 1000
+# /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 1000
