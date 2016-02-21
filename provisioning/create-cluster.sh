@@ -69,13 +69,16 @@ set -e
 
 echo "final ip: $ip"
 
+echo "sleep 30 for server to settle down"
+sleep 30
+
 p1=$(echo $ip | cut -d. -f1)
 p2=$(echo $ip | cut -d. -f2)
 p3=$(echo $ip | cut -d. -f3)
 p4=$(echo $ip | cut -d. -f4)
 
-master_hostname="ip-$p1-$p2-$p3-$p4"
-echo "master_hostname $master_hostname"
+MASTER="ip-$p1-$p2-$p3-$p4"
+echo "MASTER $MASTER"
 
 echo "Adding pub key to authorized_keys on server"
 python $DIR/add-auth-key.py $ip $root_password
@@ -104,12 +107,13 @@ mkdir -p $DIR/../log
 
 # CREATE SLAVES
 for i in `seq 1 $N`; do
-  cmd="$DIR/create-slave.sh $group_id $master_hostname dn$i $slave_cpu $slave_mem $root_password $network_id $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
+  cmd="$DIR/create-slave.sh $group_id $MASTER dn$i $slave_cpu $slave_mem $root_password $network_id $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
   nohup $cmd > $DIR/../log/create-slave-$group_name-$i.out 2>&1 < /dev/null &
 done
 
 # URLs
-echo "Resource Manager http://${master_hostname}:8088"
-echo "Namenode         http://${master_hostname}:50070"
-echo "Nodes List       http://ip-10-101-124-30:8088/ws/v1/cluster/nodes"
-echo "SSH              ssh hadoop@${master_hostname}"
+echo "Resource Manager http://${MASTER}:8088"
+echo "Namenode         http://${MASTER}:50070"
+echo "HBase Master     http://${MASTER}:16010"
+echo "Nodes List       http://${MASTER}:8088/ws/v1/cluster/nodes"
+echo "SSH              ssh hadoop@${MASTER}"

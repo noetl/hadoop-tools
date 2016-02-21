@@ -25,7 +25,7 @@ echo "Enable sudo without password"
 chmod 640 /etc/sudoers
 echo "%wheel  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
 echo "done"
-
+#---------------------------------------------------------------------
 echo "Adding hadoop user..."
 useradd hadoop
 gpasswd -a hadoop wheel

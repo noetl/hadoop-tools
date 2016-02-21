@@ -8,7 +8,7 @@ if [ $# -ne 9 ]; then
 fi
 
 group_hash=$1
-master=$2
+MASTER=$2
 slave_name=$3
 slave_cpu=$4
 slave_mem=$5
@@ -39,9 +39,12 @@ while [ $is_ip == 0 ]; do
   fi 
 done
 
+set -e
+
 echo "final ip: $ip"
 
-set -e
+echo "sleep 30 for server to settle down"
+sleep 30
 
 echo "Adding pub key to authorized_keys on server"
 python $DIR/add-auth-key.py $ip $root_password
@@ -61,7 +64,7 @@ cmd="/root/provisioning/add-users.sh"
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
 
-echo "Running install-hadoop.sh"
-cmd="nohup /root/provisioning/install-hadoop.sh ${master} $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > install-hadoop.log 2>&1 < /dev/null &"
+echo "Run install-slave-soft.sh on background"
+cmd="nohup /root/provisioning/install-slave-soft.sh ${MASTER} $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > /root/install-slave-soft.log 2>&1 < /dev/null &"
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"

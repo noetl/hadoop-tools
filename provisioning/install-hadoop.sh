@@ -24,24 +24,6 @@ echo "MASTER: $MASTER"
 echo "my_hostname: $my_hostname"
 echo "mode: $mode"
 
-# Try to install software using yum. For some reason first attempt might fail
-echo "Installing JDK....."
-set +e
-yum -y install java-devel
-if [ $? -ne 0 ]; then
-  sleep 10
-  set -e
-  yum -y install java-devel
-fi
-set -e
-echo "JDK Installation completed...."
-
-echo "Installed java version is...."
-
-java -version
-
-javac -version
-
 echo "Downloading Hadoop...."
 cd /usr/lib
 wget -q http://apache.mirrors.pair.com/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz

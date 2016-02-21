@@ -9,9 +9,6 @@ fi
 N=$1
 slave_mem=$2
 
-# give 50% of cluster resources to Spark
-exec_inst=$[1+($N-1)/2]
-
 yarn_mem=$[$slave_mem*1024*87/100]
 spark_mem=$[yarn_mem-896]
 exec_mem=$[$spark_mem*10/11]
@@ -58,7 +55,7 @@ spark.driver.extraJavaOptions    -Dfile.encoding=UTF-8
 spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
 spark.driver.extraClassPath     /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
 spark.executor.extraClassPath   /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
-spark.executor.instances    ${exec_inst}
+spark.dynamicAllocation.enabled  true
 spark.executor.memory       ${exec_mem}m
 EOL
 
