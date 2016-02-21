@@ -65,7 +65,7 @@ contexts {
 context-settings {
  num-cpu-cores = 2          # Number of cores to allocate.  Required.
  memory-per-node = 2g         # Executor memory per node, -Xmx style eg 512m, #1G, etc.
- spark.executor.instances = 2
+ spark.dynamicAllocation.enabled = true
  # If you wish to pass any settings directly to the sparkConf as-is, add them here in passthrough,
  # such as hadoop connection settings that don't use the "spark." prefix
  passthrough {
