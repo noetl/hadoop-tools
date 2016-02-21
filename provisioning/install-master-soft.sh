@@ -43,11 +43,6 @@ echo "Installing Hadoop..."
 $DIR/install-hadoop.sh ${MASTER} $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > $LOG_DIR/install-hadoop.log 2>&1
 echo "done"
 
-# Install HBase
-echo "Installing HBase..."
-$DIR/install-hbase.sh ${MASTER} > $LOG_DIR/install-hbase.log 2>&1
-echo "done"
-
 # Install Spark
 echo "Installing Spark..."
 $DIR/install-spark.sh $N $slave_mem > $LOG_DIR/install-spark.log 2>&1
@@ -75,6 +70,11 @@ set -e
 # Install Hive and TEZ
 echo "Installing Hive..."
 $DIR/install-hive.sh > $LOG_DIR/install-hive.log 2>&1
+echo "done"
+
+# Install HBase
+echo "Installing HBase..."
+$DIR/install-hbase.sh ${MASTER} > $LOG_DIR/install-hbase.log 2>&1
 echo "done"
 
 echo ""
