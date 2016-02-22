@@ -112,8 +112,14 @@ for i in `seq 1 $N`; do
 done
 
 # URLs
-echo "Resource Manager http://${MASTER}:8088"
-echo "Namenode         http://${MASTER}:50070"
-echo "HBase Master     http://${MASTER}:16010"
-echo "Nodes List       http://${MASTER}:8088/ws/v1/cluster/nodes"
-echo "SSH              ssh hadoop@${MASTER}"
+echo "-----------------------------------------------------------"
+echo "Resource Manager  http://${MASTER}:8088"
+echo "Namenode          http://${MASTER}:50070"
+echo "HBase Master      http://${MASTER}:16010"
+echo "Nodes List        http://${MASTER}:8088/ws/v1/cluster/nodes"
+echo "Hiveserver2       ${MASTER}:10000"
+echo "Zeppelin          http://${MASTER}:8080/"
+echo "SSH               ssh hadoop@${MASTER}"
+echo "zookeeper.quorum  ${MASTER}"
+echo "Terminate cluster $DIR/delete-group.sh $group_id"
+echo "-----------------------------------------------------------"

@@ -20,7 +20,7 @@ echo "mode: $mode"
 
 echo "Downloading HBase...."
 cd /usr/lib
-wget -q http://apache.arvixe.com/hbase/1.1.3/hbase-1.1.3-bin.tar.gz
+wget -q http://download.nextag.com/apache/hbase/1.1.3/hbase-1.1.3-bin.tar.gz
 echo "Installing HBase...."
 tar xzf hbase-1.1.3-bin.tar.gz
 mv hbase-1.1.3 hbase
