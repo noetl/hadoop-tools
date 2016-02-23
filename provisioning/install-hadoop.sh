@@ -91,6 +91,22 @@ cat > core-site.xml << EOL
     <name>fs.s3n.impl</name>
     <value>org.apache.hadoop.fs.s3native.NativeS3FileSystem</value>
   </property>
+  <property>
+    <name>hadoop.proxyuser.hadoop.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hadoop.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hive.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hive.groups</name>
+    <value>*</value>
+  </property>
 </configuration>
 EOL
 
@@ -249,11 +265,13 @@ else
   echo "Starting YARN nodemanager done"
 fi
 
+echo "Configure env vars...."
 su - hadoop -c 'cat >> ~/.bashrc << EOL
 export HADOOP_HOME=/usr/lib/hadoop
 export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 export PATH=\$PATH:/usr/lib/hadoop/bin
 EOL'
+echo "done"
 
 # echo "Testing MR..."
 # /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 1000

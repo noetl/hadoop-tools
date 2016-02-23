@@ -15,21 +15,10 @@ AWS_SECRET_ACCESS_KEY=$4
 LOG_DIR="/root"
 DIR="/root/provisioning"
 
-# Try to install software using yum. For some reason first attempt might fail
-echo "Installing java-devel..."
-set +e
-yum -y install java-devel
-if [ $? -ne 0 ]; then
-  sleep 10
-  set -e
-  yum -y install java-devel
-fi
-set -e
-echo "Installing java-devel done"
-
-echo "Installed java version is...."
-java -version
-javac -version
+# Install JDK
+echo "Installing JDK..."
+$DIR/install-jdk.sh > $LOG_DIR/install-jdk.log 2>&1
+echo "done"
 
 # Install Hadoop
 echo "Installing Hadoop..."

@@ -111,6 +111,14 @@ cat > hive-site.xml << EOL
     <name>hive.tez.java.opts</name>
     <value>-Xmx1120m -Xms1120m</value>
   </property>
+  <property>
+    <name>hive.server2.authentication</name>
+    <value>NONE</value>
+  </property>
+  <property>
+    <name>hive.server2.enable.doAs</name>
+    <value>true</value>
+  </property>
 </configuration>
 EOL
 
@@ -174,3 +182,4 @@ echo "Starting Hiveserver2..."
 su - hadoop -c 'nohup /usr/lib/hive/bin/hiveserver2 > /var/log/hive/hiveserver2.out 2>&1 < /dev/null &'
 echo "done"
 echo "Hiveserver2       ${MASTER}:10000"
+echo "Hiveserver2 UI    ${MASTER}:10002"

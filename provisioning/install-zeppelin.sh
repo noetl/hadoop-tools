@@ -1,10 +1,15 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 0 ]; then
-  echo "Usage: ./install-zeppelin.sh"
+if [ $# -ne 2 ]; then
+  echo "Usage: ./install-zeppelin.sh <AWS_ACCESS_KEY_ID> <AWS_ACCESS_SECRET_KEY>"
   exit -1
 fi
+
+AWS_ACCESS_KEY_ID=$1
+AWS_ACCESS_SECRET_KEY=$2
+#ZEPPELIN_NOTEBOOK_S3_BUCKET=$3
+#ZEPPELIN_NOTEBOOK_S3_USER=$4
 
 MASTER=`hostname`
 
@@ -36,18 +41,36 @@ cd /usr/lib/zeppelin/conf
 cat > zeppelin-env.sh << EOL
 export JAVA_HOME=/usr/lib/jvm/java-openjdk
 export ZEPPELIN_LOG_DIR=/var/log/zeppelin
-export ZEPPELIN_WAR_TEMPDIR=/var/zeppelin/webapps
 export ZEPPELIN_NOTEBOOK_DIR=/var/zeppelin/notebook
+export ZEPPELIN_WAR_TEMPDIR=/var/zeppelin/webapps
 export SPARK_HOME=/usr/lib/spark
 export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 export CLASSPATH=/usr/lib/zeppelin/libs3/*
+export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+export AWS_ACCESS_SECRET_KEY=$AWS_ACCESS_SECRET_KEY
+#export ZEPPELIN_NOTEBOOK_S3_BUCKET=ZEPPELIN_NOTEBOOK_S3_BUCKET
+#export ZEPPELIN_NOTEBOOK_S3_USER=ZEPPELIN_NOTEBOOK_S3_USER
 EOL
+
+#cat > zeppelin-site.xml << EOL
+#<configuration>
+#  <property>
+#    <name>zeppelin.notebook.storage</name>
+#    <value>org.apache.zeppelin.notebook.repo.S3NotebookRepo</value>
+#  </property>
+#</configuration>
+#EOL
 
 echo "Configuring Zeppelin done"
 
 su - hadoop -c 'cat >> ~/.bashrc << EOL
 export PATH=\$PATH:/usr/lib/zeppelin/bin
 EOL'
+
+#set +e
+#echo "Trying to create s3n://${ZEPPELIN_NOTEBOOK_S3_BUCKET}/${ZEPPELIN_NOTEBOOK_S3_USER}/notebook folder"
+#su - hadoop -c 'hadoop fs -mkdir -p s3n://${ZEPPELIN_NOTEBOOK_S3_BUCKET}/${ZEPPELIN_NOTEBOOK_S3_USER}/notebook'
+#set -e
 
 echo "Starting Zeppelin..."
 su - hadoop -c '/usr/lib/zeppelin/bin/zeppelin-daemon.sh start'

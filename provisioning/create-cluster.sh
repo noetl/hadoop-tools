@@ -21,6 +21,8 @@ root_password=${10}
 network_id=${11}
 AWS_ACCESS_KEY_ID=${12}
 AWS_SECRET_ACCESS_KEY=${13}
+#ZEPPELIN_NOTEBOOK_S3_BUCKET=${14}
+#ZEPPELIN_NOTEBOOK_S3_USER=${15}
 
 echo "-----------------------------------------------"
 echo "ctl_login:             $ctl_login"
@@ -36,6 +38,8 @@ echo "root_password:         $root_password"
 echo "network_id:            $network_id"
 echo "AWS_ACCESS_KEY_ID:     ${AWS_ACCESS_KEY_ID}"
 echo "AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}"
+#echo "ZEPPELIN_NOTEBOOK_S3_BUCKET: ${ZEPPELIN_NOTEBOOK_S3_BUCKET}"
+#echo "ZEPPELIN_NOTEBOOK_S3_USER:   ${ZEPPELIN_NOTEBOOK_S3_USER}"
 echo "-----------------------------------------------"
 
 echo "Running login.sh"
@@ -118,6 +122,7 @@ echo "Namenode          http://${MASTER}:50070"
 echo "HBase Master      http://${MASTER}:16010"
 echo "Nodes List        http://${MASTER}:8088/ws/v1/cluster/nodes"
 echo "Hiveserver2       ${MASTER}:10000"
+echo "Hiveserver2 UI    ${MASTER}:10002"
 echo "Zeppelin          http://${MASTER}:8080/"
 echo "SSH               ssh hadoop@${MASTER}"
 echo "zookeeper.quorum  ${MASTER}"

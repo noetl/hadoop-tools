@@ -11,27 +11,23 @@ N=$1
 slave_mem=$2
 AWS_ACCESS_KEY_ID=$3
 AWS_SECRET_ACCESS_KEY=$4
+#ZEPPELIN_NOTEBOOK_S3_BUCKET=$5
+#ZEPPELIN_NOTEBOOK_S3_USER=$6
 
 LOG_DIR="/root"
 DIR="/root/provisioning"
 
 MASTER=`hostname`
 
-# Try to install software using yum. For some reason first attempt might fail
-echo "Installing java-devel jq..."
-set +e
-yum -y install java-devel jq
-if [ $? -ne 0 ]; then
-  sleep 10
-  set -e
-  yum -y install java-devel jq
-fi
-set -e
-echo "Installing java-devel jq done"
+# Install JDK
+echo "Installing JDK..."
+$DIR/install-jdk.sh > $LOG_DIR/install-jdk.log 2>&1
+echo "done"
 
-echo "Installed java version is...."
-java -version
-javac -version
+# Install aws cli
+echo "Installing aws cli..."
+$DIR/install-aws.sh $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY > $LOG_DIR/install-aws.log 2>&1
+echo "done"
 
 # Install Zookeeper
 echo "Installing Zookeeper..."
@@ -75,6 +71,11 @@ echo "done"
 # Install HBase
 echo "Installing HBase..."
 $DIR/install-hbase.sh ${MASTER} > $LOG_DIR/install-hbase.log 2>&1
+echo "done"
+
+# Install Zeppelin
+echo "Installing Zeppelin..."
+$DIR/install-zeppelin.sh $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY > $LOG_DIR/install-zeppelin.log 2>&1
 echo "done"
 
 echo ""
