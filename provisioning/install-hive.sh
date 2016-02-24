@@ -117,7 +117,7 @@ cat > hive-site.xml << EOL
   </property>
   <property>
     <name>hive.server2.enable.doAs</name>
-    <value>true</value>
+    <value>false</value>
   </property>
 </configuration>
 EOL

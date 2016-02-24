@@ -100,11 +100,11 @@ cat > core-site.xml << EOL
     <value>*</value>
   </property>
   <property>
-    <name>hadoop.proxyuser.hive.hosts</name>
+    <name>hadoop.proxyuser.hue.hosts</name>
     <value>*</value>
   </property>
   <property>
-    <name>hadoop.proxyuser.hive.groups</name>
+    <name>hadoop.proxyuser.hue.groups</name>
     <value>*</value>
   </property>
 </configuration>
