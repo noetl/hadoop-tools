@@ -68,7 +68,7 @@ cat > interpreter.json << EOL
         "master": "yarn-client",
         "zeppelin.spark.maxResult": "1000",
         "zeppelin.dep.localrepo": "local-repo",
-        "spark.executor.extraJavaOptions": "-Dfile.encoding\u003dUTF-8",
+        "spark.executor.extraJavaOptions": "-Dfile.encoding=UTF-8",
         "spark.app.name": "Zeppelin",
         "spark.executor.extraClassPath": "/usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*",
         "spark.executor.memory": "2048m",
@@ -78,7 +78,7 @@ cat > interpreter.json << EOL
         "spark.home": "/usr/lib/spark",
         "zeppelin.pyspark.python": "python",
         "zeppelin.dep.additionalRemoteRepository": "spark-packages,http://dl.bintray.com/spark-packages/maven,false;",
-        "spark.driver.extraJavaOptions": "-Dfile.encoding\u003dUTF-8"
+        "spark.driver.extraJavaOptions": "-Dfile.encoding=UTF-8"
       },
       "interpreterGroup": [
         {
@@ -181,6 +181,8 @@ cat > interpreter.json << EOL
   ]
 }
 EOL
+
+chown hadoop:hadoop /usr/lib/zeppelin/conf/interpreter.json
 
 #cat > zeppelin-site.xml << EOL
 #<configuration>
