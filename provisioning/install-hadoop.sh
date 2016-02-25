@@ -26,7 +26,7 @@ echo "mode: $mode"
 
 echo "Downloading Hadoop...."
 cd /usr/lib
-wget -q http://apache.mirrors.pair.com/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
+wget -q http://download.nextag.com/apache/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
 echo "Installing Hadoop...."
 tar xzf hadoop-2.6.4.tar.gz
 mv hadoop-2.6.4 hadoop
@@ -132,10 +132,10 @@ cat > mapred-site.xml << EOL
     <name>mapred.output.direct.NativeS3FileSystem</name>
     <value>true</value>
   </property>
-  <property>
+  <!--property>
     <name>mapred.output.committer.class</name>
     <value>org.apache.hadoop.mapred.DirectFileOutputCommitter</value>
-  </property>
+  </property-->
 </configuration>
 EOL
 
