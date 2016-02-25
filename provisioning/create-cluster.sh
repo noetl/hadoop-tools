@@ -7,6 +7,14 @@ if [ $# -ne 13 ]; then
   exit -1
 fi
 
+set +e
+if ! type jq ; then echo "jq not found"; exit 1; fi
+if ! python -c "import paramiko" ; then echo "Python module paramiko not found"; exit 1; fi
+if [ ! -f ~/.ssh/id_rsa.pub ]; then echo "~/.ssh/id_rsa.pub not found"; exit 1; fi
+if ! ping -c 1 10.101.124.1 ; then echo "Can not ping 10.101.124.1 VPN not connected"; exit 1; fi
+echo "All required soft installed"
+set -e
+
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ctl_login=$1
 ctl_password=$2
