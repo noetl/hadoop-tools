@@ -20,11 +20,11 @@ echo "mode: $mode"
 
 echo "Downloading HBase...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/hbase/1.1.3/hbase-1.1.3-bin.tar.gz
+wget -q http://download.nextag.com/apache/hbase/0.98.17/hbase-0.98.17-hadoop2-bin.tar.gz
 echo "Installing HBase...."
-tar xzf hbase-1.1.3-bin.tar.gz
-mv hbase-1.1.3 hbase
-rm -rf hbase-1.1.3-bin.tar.gz
+tar xzf hbase-0.98.17-hadoop2-bin.tar.gz
+mv hbase-0.98.17-hadoop2 hbase
+rm -rf hbase-0.98.17-hadoop2-bin.tar.gz
 
 if [ "$mode" == "master" ]; then
   su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /tmp /hbase'
@@ -70,10 +70,10 @@ if [ "$mode" == "master" ]; then
   echo "Starting HBase Master..."
   su - hadoop -c '/usr/lib/hbase/bin/hbase-daemon.sh --config /usr/lib/hbase/conf start master'
   echo "done"
-  echo "HBase Master     http://${MASTER}:16010"
+  echo "HBase Master     http://${MASTER}:60010"
 else
   echo "Starting HBase Regionserver..."
   su - hadoop -c '/usr/lib/hbase/bin/hbase-daemon.sh --config /usr/lib/hbase/conf start regionserver'
   echo "done"
-  echo "HBase Regionserver    http://${MASTER}:16020"
+  echo "HBase Regionserver    http://${MASTER}:60020"
 fi

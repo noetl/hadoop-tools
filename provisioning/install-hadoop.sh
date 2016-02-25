@@ -226,7 +226,10 @@ EOL
 mkdir /usr/lib/hadoop-s3
 cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/common/lib/
 cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/yarn/lib/
-cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop-s3/
+cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* \
+  /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar \
+  /usr/lib/hadoop/share/hadoop/tools/lib/guava-*.jar \
+  /usr/lib/hadoop-s3/
 
 # Spark shuffle service jar
 wget -q http://www.noetl.io/spark-1.6.0-yarn-shuffle.jar -P /usr/lib/hadoop/share/hadoop/yarn/lib

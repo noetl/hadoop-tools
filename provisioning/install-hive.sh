@@ -12,11 +12,11 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Hive...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/hive/hive-2.0.0/apache-hive-2.0.0-bin.tar.gz
+wget -q http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
 echo "Installing Hive...."
-tar xzf apache-hive-2.0.0-bin.tar.gz
-mv apache-hive-2.0.0-bin hive
-rm -rf apache-hive-2.0.0-bin.tar.gz
+tar xzf apache-hive-1.2.1-bin.tar.gz
+mv apache-hive-1.2.1-bin hive
+rm -rf apache-hive-1.2.1-bin.tar.gz
 
 echo "Installing mysql-connector-java...."
 wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
@@ -46,7 +46,7 @@ cd /usr/lib/hive/scripts/metastore/upgrade/mysql
 cat > create_metastore.sql << EOL
 CREATE DATABASE metastore;
 USE metastore;
-SOURCE hive-schema-2.0.0.mysql.sql;
+SOURCE hive-schema-1.2.0.mysql.sql;
 CREATE USER 'hive'@'${MASTER}' IDENTIFIED BY 'hive';
 GRANT all on *.* to 'hive'@'$MASTER' identified by 'hive';
 flush privileges;
