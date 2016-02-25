@@ -57,8 +57,10 @@ echo "Creating metastore DB done"
 
 cd -
 
-su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /tmp /user/hive/warehouse'
-su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod g+w /tmp /user/hive/warehouse'
+su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /tmp'
+su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod 777 /tmp'
+su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hive/warehouse'
+su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod g+w /user/hive/warehouse'
 
 mkdir -p /var/log/hive
 chown hadoop:hadoop /var/log/hive

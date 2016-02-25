@@ -32,6 +32,9 @@ tar xzf hadoop-2.6.4.tar.gz
 mv hadoop-2.6.4 hadoop
 rm -rf hadoop-2.6.4.tar.gz
 
+# Hive uses jline v2. Lets remove old jline to avoid conflicts
+mv /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar.delme
+
 mkdir -p /hdfs/name
 mkdir -p /hdfs/data
 mkdir -p /var/log/hadoop-yarn/containers
