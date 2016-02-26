@@ -16,9 +16,11 @@ import os, sys, subprocess, re, argparse, json
 
 prompt = '> '
 
+
 def prog_quit(error_msg):
     print("Program terminated due: ", error_msg)
     quit()
+
 
 def add_cmd(cmd, args):
     try:
@@ -204,11 +206,6 @@ def main():
 
             print("Number of input arguments is: ", len(sys.argv),"\nGiven arguments are: ", json.dumps(vars(args), indent = 4))
 
-            if args.preserve:
-                print("print pre ",args.preserve)
-            else:
-                print("else ",type(args.preserve))
-
         if len(args.files) > 0:
             dst_uri = args.files[-1]
             add_cmd("hadoop distcp", args)
@@ -229,7 +226,7 @@ def main():
             def evaluate_uri(src_uri , uri, dst_uri, uri_type):
                     #print("evaluate_uri:\nsrc_uri: ",src_uri,"\nuri: ",uri,"\ndst_uri: ",dst_uri,"\nuri_type: ",uri_type)
                     return src_uri + "/" + uri.split("/")[-1] + " " + dst_uri + "/" + uri.split("/")[-1]  \
-                        if uri_type else uri + " " + dst_uri + "/" + uri.split("/")[-1] 
+                        if uri_type else uri + " " + dst_uri + "/" + uri.split("/")[-1]
             out, err, exit_code = exec_shell("hadoop fs -ls  " + src_uri)
 
             if exit_code == 0:
@@ -248,5 +245,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     sys.exit(main())
