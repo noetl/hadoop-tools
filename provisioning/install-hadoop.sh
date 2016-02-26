@@ -95,6 +95,10 @@ cat > core-site.xml << EOL
     <value>org.apache.hadoop.fs.s3native.NativeS3FileSystem</value>
   </property>
   <property>
+    <name>fs.s3n.multipart.uploads.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
     <name>hadoop.proxyuser.hadoop.hosts</name>
     <value>*</value>
   </property>
