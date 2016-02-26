@@ -232,7 +232,7 @@ export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 export PATH=\$PATH:/usr/lib/hadoop/bin
 EOL
 
-cat $DIR/conf/capacity-scheduler > capacity-scheduler.xml
+cat $DIR/conf/capacity-scheduler.xml > capacity-scheduler.xml
 
 mkdir /usr/lib/hadoop-s3
 cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/common/lib/
