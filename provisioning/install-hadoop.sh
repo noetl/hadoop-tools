@@ -24,6 +24,8 @@ echo "MASTER: $MASTER"
 echo "my_hostname: $my_hostname"
 echo "mode: $mode"
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
 echo "Downloading Hadoop...."
 cd /usr/lib
 wget -q http://download.nextag.com/apache/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
@@ -229,6 +231,8 @@ export HADOOP_HOME=/usr/lib/hadoop
 export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 export PATH=\$PATH:/usr/lib/hadoop/bin
 EOL
+
+cat $DIR/conf/capacity-scheduler > capacity-scheduler.xml
 
 mkdir /usr/lib/hadoop-s3
 cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/common/lib/
