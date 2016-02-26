@@ -73,9 +73,9 @@ cat > hive-env.sh << EOL
 export HADOOP_HOME=/usr/lib/hadoop
 export TEZ_CONF_DIR=/usr/lib/tez/conf
 if [ "\$HADOOP_CLASSPATH" ]; then
-  export HADOOP_CLASSPATH=\$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
+  export HADOOP_CLASSPATH=\$HADOOP_CLASSPATH:/usr/lib/hadoop-s3/*:/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
 else
-  export HADOOP_CLASSPATH=/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
+  export HADOOP_CLASSPATH=/usr/lib/hadoop-s3/*:/usr/lib/hadoop/share/hadoop/tools/lib/*:/usr/lib/tez/conf:/usr/lib/tez/*:/usr/lib/tez/lib/*
 fi
 EOL
 
@@ -136,7 +136,7 @@ mkdir tez-full
 cd tez-full
 tar xzf ../tez-0.8.2.tar.gz
 rm -rf ../tez-0.8.2.tar.gz
-cp /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/tools/lib/*aws* lib/
+cp /usr/lib/hadoop-s3/* lib/
 
 cd ..
 mkdir tez

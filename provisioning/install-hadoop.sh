@@ -44,6 +44,10 @@ mkdir -p /var/log/hadoop-yarn/apps
 mkdir -p /var/log/hadoop /usr/lib/hadoop/logs
 chown -R hadoop:hadoop /hdfs /var/log/hadoop-yarn /var/log/hadoop /usr/lib/hadoop/logs
 
+echo "Download noetl-hadoop-tools-1.0.jar"
+cd /usr/lib/hadoop/share/hadoop/mapreduce
+wget -q http://fostercitylab.crabdance.com/usb/noetl-hadoop-tools-1.0.jar
+
 echo "Configuring Hadoop...."
 
 cd /usr/lib/hadoop/etc/hadoop
@@ -134,17 +138,9 @@ cat > mapred-site.xml << EOL
     <value>${MASTER}:19888</value>
   </property>
   <property>
-    <name>mapred.output.direct.EmrFileSystem</name>
-    <value>true</value>
-  </property>
-  <property>
-    <name>mapred.output.direct.NativeS3FileSystem</name>
-    <value>true</value>
-  </property>
-  <!--property>
     <name>mapred.output.committer.class</name>
-    <value>org.apache.hadoop.mapred.DirectFileOutputCommitter</value>
-  </property-->
+    <value>org.apache.hadoop.mapred.DirectOutputCommitter</value>
+  </property>
 </configuration>
 EOL
 
@@ -235,11 +231,20 @@ EOL
 cat $DIR/conf/capacity-scheduler.xml > capacity-scheduler.xml
 
 mkdir /usr/lib/hadoop-s3
-cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/common/lib/
-cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar /usr/lib/hadoop/share/hadoop/yarn/lib/
+cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* \
+  /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar \
+  /usr/lib/hadoop/share/hadoop/mapreduce/noetl-hadoop-tools-*.jar \
+  /usr/lib/hadoop/share/hadoop/common/lib/
+
+cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* \
+  /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar \
+  /usr/lib/hadoop/share/hadoop/mapreduce/noetl-hadoop-tools-*.jar \
+  /usr/lib/hadoop/share/hadoop/yarn/lib/
+
 cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* \
   /usr/lib/hadoop/share/hadoop/tools/lib/jets3t*.jar \
   /usr/lib/hadoop/share/hadoop/tools/lib/guava-*.jar \
+  /usr/lib/hadoop/share/hadoop/mapreduce/noetl-hadoop-tools-*.jar \
   /usr/lib/hadoop-s3/
 
 # Spark shuffle service jar
