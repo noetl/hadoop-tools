@@ -46,11 +46,11 @@ done
 echo "/data02 is mounted"
 set -e
 
-mkdir -p /data01/tmp /data01/hdfs/name /data02/hdfs/name
+mkdir -p /data01/tmp /data02/tmp /data01/hdfs/name /data02/hdfs/name
 mkdir -p /data01/hdfs/data /data02/hdfs/data /data01/yarn/nm /data02/yarn/nm
-mkdir -p /data01/var/log/yarn/apps /data01/var/log/yarn/containers
+mkdir -p /data01/var/log/yarn/containers
 mkdir -p /data01/var/log/hadoop /usr/lib/hadoop/logs
-chown -R hadoop:hadoop /data01/tmp /data01/hdfs/name /data02/hdfs/name /data01/hdfs /data02/hdfs /data01/yarn /data02/yarn
+chown -R hadoop:hadoop /data01/tmp /data02/tmp /data01/hdfs/name /data02/hdfs/name /data01/hdfs /data02/hdfs /data01/yarn /data02/yarn
 chown -R hadoop:hadoop /data01/var/log/yarn /data01/var/log/hadoop /usr/lib/hadoop/logs
 
 echo "Download noetl-hadoop-tools-1.0.jar"
@@ -217,7 +217,7 @@ cat > yarn-site.xml << EOL
   <property>
     <description>Where to aggregate logs to.</description>
     <name>yarn.nodemanager.remote-app-log-dir</name>
-    <value>/data01/var/log/yarn/apps</value>
+    <value>/var/log/yarn/apps</value>
   </property>
 
   <property>
@@ -332,3 +332,5 @@ echo "done"
 
 # echo "Testing MR..."
 # /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.4.jar pi 10 1000
+# /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.4.jar teragen -D mapred.map.tasks=30 100000000 tera100
+#

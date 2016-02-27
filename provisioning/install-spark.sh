@@ -25,8 +25,8 @@ tar zxf spark-1.6.0-bin-hadoop2.6.tgz
 mv spark-1.6.0-bin-hadoop2.6 spark
 rm -rf spark-1.6.0-bin-hadoop2.6.tgz
 
-mkdir -p /var/log/spark
-chown hadoop:hadoop /var/log/spark
+mkdir -p /data01/var/log/spark
+chown hadoop:hadoop /data01/var/log/spark
 
 su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /var/log/spark/apps'
 su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod g+w /var/log/spark/apps'
@@ -37,7 +37,7 @@ cd /usr/lib/spark/conf
 
 cat > spark-env.sh << EOL
 export SPARK_HOME=${SPARK_HOME:-/usr/lib/spark}
-export SPARK_LOG_DIR=${SPARK_LOG_DIR:-/var/log/spark}
+export SPARK_LOG_DIR=${SPARK_LOG_DIR:-/data01/var/log/spark}
 export HADOOP_HOME=${HADOOP_HOME:-/usr/lib/hadoop}
 export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/usr/lib/hadoop/etc/hadoop}
 export HIVE_CONF_DIR=${HIVE_CONF_DIR:-/usr/lib/hive/conf}
@@ -45,6 +45,7 @@ EOL
 
 cat > spark-defaults.conf << EOL
 spark.master yarn
+spark.local.dir /data01/tmp,/data02/tmp
 spark.eventLog.enabled true
 spark.eventLog.dir hdfs:///var/log/spark/apps
 spark.history.fs.logDirectory hdfs:///var/log/spark/apps
