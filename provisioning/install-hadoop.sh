@@ -87,7 +87,7 @@ cat > core-site.xml << EOL
   </property>
   <property>
     <name>hadoop.tmp.dir</name>
-    <value>/data01/tmp/hadoop-${user.name}</value>
+    <value>/data01/tmp/hadoop-\${user.name}</value>
   </property>
   <property>
     <name>fs.s3.awsAccessKeyId</name>
