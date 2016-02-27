@@ -92,10 +92,13 @@ echo "MASTER $MASTER"
 mkdir -p $DIR/../log
 
 # CREATE SLAVES
+echo "Schedule creating slaves"
 for i in `seq 1 $N`; do
+  echo "Schedule creating slave dn$i"
   cmd="$DIR/create-slave.sh $group_id $MASTER dn$i $slave_cpu $slave_mem $root_password $network_id $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
   nohup $cmd > $DIR/../log/create-slave-$group_name-$i.out 2>&1 < /dev/null &
 done
+echo "Schedule creating slaves done"
 
 # Configure master and install soft
 echo "sleep 30 for server to settle down"

@@ -46,12 +46,16 @@ done
 echo "/data02 is mounted"
 set -e
 
-mkdir -p /data01/tmp /data02/tmp /data01/hdfs/name /data02/hdfs/name
-mkdir -p /data01/hdfs/data /data02/hdfs/data /data01/yarn/nm /data02/yarn/nm
+mkdir -p /data01/tmp /data02/tmp /data01/var /data02/var
+mkdir -p /data01/hdfs/name /data02/hdfs/name
+mkdir -p /data01/hdfs/data /data02/hdfs/data
+mkdir -p /data01/yarn/nm /data02/yarn/nm
 mkdir -p /data01/var/log/yarn/containers
 mkdir -p /data01/var/log/hadoop /usr/lib/hadoop/logs
-chown -R hadoop:hadoop /data01/tmp /data02/tmp /data01/hdfs/name /data02/hdfs/name /data01/hdfs /data02/hdfs /data01/yarn /data02/yarn
-chown -R hadoop:hadoop /data01/var/log/yarn /data01/var/log/hadoop /usr/lib/hadoop/logs
+chown -R hadoop:hadoop /data01/tmp /data02/tmp /data01/var /data02/var
+chown -R hadoop:hadoop /data01/hdfs /data02/hdfs /data01/yarn /data02/yarn
+chown -R hadoop:hadoop /usr/lib/hadoop/logs
+chmod 777 /data01/tmp /data02/tmp
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
