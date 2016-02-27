@@ -14,8 +14,8 @@ tar xzf zookeeper-3.4.8.tar.gz
 mv zookeeper-3.4.8 zookeeper
 rm -rf zookeeper-3.4.8.tar.gz
 
-mkdir -p /var/zookeeper /var/log/zookeeper
-chown hadoop:hadoop /var/zookeeper /var/log/zookeeper
+mkdir -p /data01/var/zookeeper /data01/var/log/zookeeper
+chown hadoop:hadoop /data01/var/zookeeper /data01/var/log/zookeeper
 
 echo "Configuring Zookeeper...."
 
@@ -25,7 +25,7 @@ cat > zoo.cfg << EOL
 tickTime=2000
 initLimit=10
 syncLimit=5
-dataDir=/var/zookeeper
+dataDir=/data01/var/zookeeper
 clientPort=2181
 autopurge.snapRetainCount=3
 autopurge.purgeInterval=1
@@ -35,9 +35,9 @@ echo "Configuring Zookeeper done"
 
 su - hadoop -c 'cat >> ~/.bashrc << EOL
 export PATH=\$PATH:/usr/lib/zookeeper/bin
-export ZOO_LOG_DIR=/var/log/zookeeper
+export ZOO_LOG_DIR=/data01/var/log/zookeeper
 EOL'
 
 echo "Starting Zookeeper..."
-su - hadoop -c 'ZOO_LOG_DIR=/var/log/zookeeper JAVA_HOME=/usr/lib/jvm/java-openjdk /usr/lib/zookeeper/bin/zkServer.sh start'
+su - hadoop -c 'ZOO_LOG_DIR=/data01/var/log/zookeeper JAVA_HOME=/usr/lib/jvm/java-openjdk /usr/lib/zookeeper/bin/zkServer.sh start'
 echo "done"

@@ -25,9 +25,9 @@ mv zeppelin-0.6.0-incubating-SNAPSHOT zeppelin
 rm -rf zeppelin-0.6.0-incubating-SNAPSHOT.tar.gz
 
 echo "Configuring dirs for Zeppelin...."
-mkdir -p /var/log/zeppelin /var/lib/zeppelin/notebook /var/lib/zeppelin/webapps /var/run/zeppelin
-chown -R hadoop:hadoop /var/log/zeppelin /var/lib/zeppelin /var/run/zeppelin /usr/lib/zeppelin/conf
-su - hadoop -c 'cp -R /usr/lib/zeppelin/notebook/* /var/lib/zeppelin/notebook/'
+mkdir -p /data01/var/log/zeppelin /data01/var/lib/zeppelin/notebook /data01/var/lib/zeppelin/webapps /data01/var/run/zeppelin
+chown -R hadoop:hadoop /data01/var/log/zeppelin /data01/var/lib/zeppelin /data01/var/run/zeppelin /usr/lib/zeppelin/conf
+su - hadoop -c 'cp -R /usr/lib/zeppelin/notebook/* /data01/var/lib/zeppelin/notebook/'
 
 echo "Configuring libs for Zeppelin...."
 mkdir /usr/lib/zeppelin/libs3
@@ -41,10 +41,10 @@ cd /usr/lib/zeppelin/conf
 
 cat > zeppelin-env.sh << EOL
 export JAVA_HOME=/usr/lib/jvm/java-openjdk
-export ZEPPELIN_LOG_DIR=/var/log/zeppelin
-export ZEPPELIN_PID_DIR=/var/run/zeppelin
-export ZEPPELIN_NOTEBOOK_DIR=/var/lib/zeppelin/notebook
-export ZEPPELIN_WAR_TEMPDIR=/var/lib/zeppelin/webapps
+export ZEPPELIN_LOG_DIR=/data01/var/log/zeppelin
+export ZEPPELIN_PID_DIR=/data01/var/run/zeppelin
+export ZEPPELIN_NOTEBOOK_DIR=/data01/var/lib/zeppelin/notebook
+export ZEPPELIN_WAR_TEMPDIR=/data01/var/lib/zeppelin/webapps
 export SPARK_HOME=/usr/lib/spark
 export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 export CLASSPATH=/usr/lib/hadoop/etc/hadoop:/usr/lib/hive/conf:/usr/lib/zeppelin/libs3/*:/usr/lib/hadoop-s3/*

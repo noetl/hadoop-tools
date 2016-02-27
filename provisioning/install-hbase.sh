@@ -30,8 +30,8 @@ if [ "$mode" == "master" ]; then
   su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /tmp /hbase'
 fi
 
-mkdir -p /var/log/hbase
-chown hadoop:hadoop /var/log/hbase
+mkdir -p /data01/var/log/hbase
+chown hadoop:hadoop /data01/var/log/hbase
 
 echo "Configuring HBase...."
 
@@ -39,7 +39,7 @@ cd /usr/lib/hbase/conf
 
 cat > hbase-env.sh << EOL
 export JAVA_HOME=/usr/lib/jvm/java-openjdk
-export HBASE_LOG_DIR=/var/log/hbase
+export HBASE_LOG_DIR=/data01/var/log/hbase
 export HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 EOL
 

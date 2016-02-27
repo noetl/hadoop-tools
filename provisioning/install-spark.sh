@@ -9,9 +9,14 @@ fi
 N=$1
 slave_mem=$2
 
-yarn_mem=$[$slave_mem*1024*87/100]
+yarn_mem=$[slave_mem*1024*87/100]
 spark_mem=$[yarn_mem-896]
-exec_mem=$[$spark_mem*10/11]
+exec_mem=$[spark_mem*10/11]
+exec_mem_over=$[spark_mem-exec_mem]
+
+echo "yarn.nodemanager.resource.memory-mb ${yarn_mem}"
+echo "spark.executor.memory               ${exec_mem}m"
+echo "spark.yarn.executor.memoryOverhead  ${exec_mem_over}"
 
 MASTER=`hostname`
 
@@ -58,6 +63,7 @@ spark.driver.extraClassPath     /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
 spark.executor.extraClassPath   /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
 spark.dynamicAllocation.enabled  true
 spark.executor.memory       ${exec_mem}m
+spark.yarn.executor.memoryOverhead ${exec_mem_over}
 EOL
 
 echo "Configuring Spark done"

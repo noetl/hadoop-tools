@@ -62,8 +62,8 @@ su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod 777 /tmp'
 su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /user/hive/warehouse'
 su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod g+w /user/hive/warehouse'
 
-mkdir -p /var/log/hive
-chown hadoop:hadoop /var/log/hive
+mkdir -p /data01/var/log/hive
+chown hadoop:hadoop /data01/var/log/hive
 
 echo "Configuring Hive...."
 
@@ -181,7 +181,7 @@ export PATH=\$PATH:/usr/lib/hive/bin
 EOL'
 
 echo "Starting Hiveserver2..."
-su - hadoop -c 'nohup /usr/lib/hive/bin/hiveserver2 > /var/log/hive/hiveserver2.out 2>&1 < /dev/null &'
+su - hadoop -c 'nohup /usr/lib/hive/bin/hiveserver2 > /data01/var/log/hive/hiveserver2.out 2>&1 < /dev/null &'
 echo "done"
 echo "Hiveserver2       ${MASTER}:10000"
 echo "Hiveserver2 UI    ${MASTER}:10002"

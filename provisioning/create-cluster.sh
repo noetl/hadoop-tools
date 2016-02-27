@@ -81,9 +81,6 @@ set -e
 
 echo "final ip: $ip"
 
-echo "sleep 30 for server to settle down"
-sleep 30
-
 p1=$(echo $ip | cut -d. -f1)
 p2=$(echo $ip | cut -d. -f2)
 p3=$(echo $ip | cut -d. -f3)
@@ -91,6 +88,18 @@ p4=$(echo $ip | cut -d. -f4)
 
 MASTER="ip-$p1-$p2-$p3-$p4"
 echo "MASTER $MASTER"
+
+mkdir -p $DIR/../log
+
+# CREATE SLAVES
+for i in `seq 1 $N`; do
+  cmd="$DIR/create-slave.sh $group_id $MASTER dn$i $slave_cpu $slave_mem $root_password $network_id $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
+  nohup $cmd > $DIR/../log/create-slave-$group_name-$i.out 2>&1 < /dev/null &
+done
+
+# Configure master and install soft
+echo "sleep 30 for server to settle down"
+sleep 30
 
 echo "Adding pub key to authorized_keys on server"
 python $DIR/add-auth-key.py $ip $root_password
@@ -114,14 +123,6 @@ echo "Run install-master-soft.sh on background"
 cmd="nohup /root/provisioning/install-master-soft.sh $N $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > /root/install-master-soft.log 2>&1 < /dev/null &"
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
-
-mkdir -p $DIR/../log
-
-# CREATE SLAVES
-for i in `seq 1 $N`; do
-  cmd="$DIR/create-slave.sh $group_id $MASTER dn$i $slave_cpu $slave_mem $root_password $network_id $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
-  nohup $cmd > $DIR/../log/create-slave-$group_name-$i.out 2>&1 < /dev/null &
-done
 
 # URLs
 echo "-----------------------------------------------------------"

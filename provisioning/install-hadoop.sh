@@ -211,13 +211,13 @@ cat > yarn-site.xml << EOL
 
   <property>
     <name>yarn.nodemanager.local-dirs</name>
-    <value>file:///data01/yarn/nm,file:///data02/yarn/nm</value>
+    <value>/data01/yarn/nm,/data02/yarn/nm</value>
   </property>
 
   <property>
     <description>Where to aggregate logs to.</description>
     <name>yarn.nodemanager.remote-app-log-dir</name>
-    <value>/var/log/yarn/apps</value>
+    <value>hdfs:///var/log/yarn/apps</value>
   </property>
 
   <property>
@@ -333,4 +333,4 @@ echo "done"
 # echo "Testing MR..."
 # /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.4.jar pi 10 1000
 # /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.4.jar teragen -D mapred.map.tasks=30 100000000 tera100
-#
+# /usr/lib/hadoop/bin/hadoop jar /usr/lib/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.4.jar terasort -D mapred.reduce.tasks=20 tera100 tera100s

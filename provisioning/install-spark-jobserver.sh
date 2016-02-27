@@ -19,9 +19,8 @@ echo "Installing Spark-jobserver...."
 tar zxf spark-jobserver-0.6.1.tar.gz
 rm -rf spark-jobserver-0.6.1.tar.gz
 
-mkdir -p /var/log/spark-jobserver
-mkdir -p /var/spark-jobserver
-chown hadoop:hadoop /var/log/spark-jobserver /var/spark-jobserver
+mkdir -p /data01/var/log/spark-jobserver /data01/var/spark-jobserver
+chown hadoop:hadoop /data01/var/log/spark-jobserver /data01/var/spark-jobserver
 
 echo "Configuring Spark-jobserver...."
 
@@ -29,8 +28,8 @@ cat > settings.sh << EOL
 APP_USER=root
 APP_GROUP=root
 INSTALL_DIR=/usr/lib/spark-jobserver
-LOG_DIR=/var/log/spark-jobserver
-PIDFILE=/var/spark-jobserver/spark-jobserver.pid
+LOG_DIR=/data01/var/log/spark-jobserver
+PIDFILE=/data01/var/spark-jobserver/spark-jobserver.pid
 JOBSERVER_MEMORY=1G
 SPARK_VERSION=1.6.0
 SPARK_HOME=/usr/lib/spark
@@ -46,10 +45,10 @@ spark {
 master = "yarn-client"
 jobserver {
  port = 8090
- jar-store-rootdir = /var/spark-jobserver/jars
+ jar-store-rootdir = /data01/var/spark-jobserver/jars
  jobdao = spark.jobserver.io.JobFileDAO
  filedao {
-   rootdir = /var/spark-jobserver/filedao/data
+   rootdir = /data01/var/spark-jobserver/filedao/data
  }
 }
 # predefined Spark contexts
