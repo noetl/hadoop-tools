@@ -50,7 +50,7 @@ mkdir -p /data01/hdfs/data /data02/hdfs/data
 mkdir -p /var/log/hadoop-yarn/containers
 mkdir -p /var/log/hadoop-yarn/apps
 mkdir -p /var/log/hadoop /usr/lib/hadoop/logs
-chown -R hadoop:hadoop /data01/hdfs /data02/hdfs /var/log/hadoop-yarn /var/log/hadoop /usr/lib/hadoop/logs
+chown -R hadoop:hadoop /hdfs /data01/hdfs /data02/hdfs /var/log/hadoop-yarn /var/log/hadoop /usr/lib/hadoop/logs
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
