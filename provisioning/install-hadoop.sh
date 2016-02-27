@@ -37,12 +37,20 @@ rm -rf hadoop-2.6.4.tar.gz
 # Hive uses jline v2. Lets remove old jline to avoid conflicts
 mv /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar.delme
 
+echo "Waiting for dirs to be mounted..."
+set +e
+while [ ! -d /data02 ]; do
+  echo "sleep 30"
+  sleep 30
+done
+set -e
+
 mkdir -p /hdfs/name
-mkdir -p /data01/hdfs/data /data02/hdfs/data /data03/hdfs/data /data04/hdfs/data
+mkdir -p /data01/hdfs/data /data02/hdfs/data
 mkdir -p /var/log/hadoop-yarn/containers
 mkdir -p /var/log/hadoop-yarn/apps
 mkdir -p /var/log/hadoop /usr/lib/hadoop/logs
-chown -R hadoop:hadoop /hdfs /var/log/hadoop-yarn /var/log/hadoop /usr/lib/hadoop/logs
+chown -R hadoop:hadoop /data01/hdfs /data02/hdfs /var/log/hadoop-yarn /var/log/hadoop /usr/lib/hadoop/logs
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
@@ -232,7 +240,7 @@ cat > hdfs-site.xml << EOL
   </property>
   <property>
     <name>dfs.datanode.data.dir</name>
-    <value>file:///data01/hdfs/data,file:///data02/hdfs/data,file:///data03/hdfs/data,file:///data04/hdfs/data</value>
+    <value>file:///data01/hdfs/data,file:///data02/hdfs/data</value>
   </property>
 </configuration>
 EOL
