@@ -30,7 +30,13 @@ self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: appli
   'cpu': ${cpu},
   'memoryGB': ${mem_gb},
   'type': 'standard',
-  'storageType': 'standard'
+  'storageType': 'standard',
+  'additionalDisks':[
+    { 'path': "/data01", "sizeGB": 50, "type": "partitioned" },
+    { 'path': "/data02", "sizeGB": 50, "type": "partitioned" },
+    { 'path': "/data03", "sizeGB": 50, "type": "partitioned" },
+    { 'path': "/data04", "sizeGB": 50, "type": "partitioned" }
+  ]
 }" \
 https://api.ctl.io/v2/servers/NOMS/ | jq -r ".links[1].href"`
 

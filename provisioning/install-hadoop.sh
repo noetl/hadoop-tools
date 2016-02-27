@@ -38,7 +38,7 @@ rm -rf hadoop-2.6.4.tar.gz
 mv /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar.delme
 
 mkdir -p /hdfs/name
-mkdir -p /hdfs/data
+mkdir -p /data01/hdfs/data /data02/hdfs/data /data03/hdfs/data /data04/hdfs/data
 mkdir -p /var/log/hadoop-yarn/containers
 mkdir -p /var/log/hadoop-yarn/apps
 mkdir -p /var/log/hadoop /usr/lib/hadoop/logs
@@ -138,6 +138,26 @@ cat > mapred-site.xml << EOL
     <value>${MASTER}:19888</value>
   </property>
   <property>
+    <name>mapreduce.task.io.sort.mb</name>
+    <value>256</value>
+  </property>
+  <property>
+    <name>mapreduce.map.memory.mb</name>
+    <value>2560</value>
+  </property>
+  <property>
+    <name>mapreduce.map.java.opts</name>
+    <value>-Xmx2304m</value>
+  </property>
+  <property>
+    <name>mapreduce.reduce.memory.mb</name>
+    <value>4096</value>
+  </property>
+  <property>
+    <name>mapreduce.reduce.java.opts</name>
+    <value>-Xmx3686m</value>
+  </property>
+  <property>
     <name>mapred.output.committer.class</name>
     <value>org.apache.hadoop.mapred.DirectOutputCommitter</value>
   </property>
@@ -212,7 +232,7 @@ cat > hdfs-site.xml << EOL
   </property>
   <property>
     <name>dfs.datanode.data.dir</name>
-    <value>file:///hdfs/data</value>
+    <value>file:///data01/hdfs/data,file:///data02/hdfs/data,file:///data03/hdfs/data,file:///data04/hdfs/data</value>
   </property>
 </configuration>
 EOL
