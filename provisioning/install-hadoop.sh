@@ -39,18 +39,19 @@ mv /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar /usr/lib/hadoop/share/
 
 echo "Waiting for dirs to be mounted..."
 set +e
-while [ ! -d /data02 ]; do
-  echo "sleep 30"
+while ! grep -qs '/data02' /proc/mounts ; do
+  echo "/data02 not mounted yet. sleep 30"
   sleep 30
 done
+echo "/data02 is mounted"
 set -e
 
-mkdir -p /hdfs/name
-mkdir -p /data01/hdfs/data /data02/hdfs/data
-mkdir -p /var/log/hadoop-yarn/containers
-mkdir -p /var/log/hadoop-yarn/apps
-mkdir -p /var/log/hadoop /usr/lib/hadoop/logs
-chown -R hadoop:hadoop /hdfs /data01/hdfs /data02/hdfs /var/log/hadoop-yarn /var/log/hadoop /usr/lib/hadoop/logs
+mkdir -p /data01/tmp /data01/hdfs/name /data02/hdfs/name
+mkdir -p /data01/hdfs/data /data02/hdfs/data /data01/yarn/nm /data02/yarn/nm
+mkdir -p /data01/var/log/yarn/apps /data01/var/log/yarn/containers
+mkdir -p /data01/var/log/hadoop /usr/lib/hadoop/logs
+chown -R hadoop:hadoop /data01/tmp /data01/hdfs/name /data02/hdfs/name /data01/hdfs /data02/hdfs /data01/yarn /data02/yarn
+chown -R hadoop:hadoop /data01/var/log/yarn /data01/var/log/hadoop /usr/lib/hadoop/logs
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
@@ -62,7 +63,7 @@ cd /usr/lib/hadoop/etc/hadoop
 
 cat >> hadoop-env.sh << EOL
 export JAVA_HOME=/usr/lib/jvm/java-openjdk
-export HADOOP_LOG_DIR=/var/log/hadoop
+export HADOOP_LOG_DIR=/data01/var/log/hadoop
 if [ "\$HADOOP_CLASSPATH" ]; then
   export HADOOP_CLASSPATH=\$HADOOP_CLASSPATH:/usr/lib/hadoop/share/hadoop/tools/lib/*
 else
@@ -71,11 +72,11 @@ fi
 EOL
 
 cat >> mapred-env.sh << EOL
-export HADOOP_MAPRED_LOG_DIR=/var/log/hadoop
+export HADOOP_MAPRED_LOG_DIR=/data01/var/log/hadoop
 EOL
 
 cat >> yarn-env.sh << EOL
-export YARN_LOG_DIR=/var/log/hadoop
+export YARN_LOG_DIR=/data01/var/log/hadoop
 EOL
 
 cat > core-site.xml << EOL
@@ -83,6 +84,10 @@ cat > core-site.xml << EOL
   <property>
     <name>fs.default.name</name>
     <value>hdfs://${MASTER}:8020</value>
+  </property>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/data01/tmp/hadoop-${user.name}</value>
   </property>
   <property>
     <name>fs.s3.awsAccessKeyId</name>
@@ -201,13 +206,18 @@ cat > yarn-site.xml << EOL
   <property>
     <description>Where to store container logs.</description>
     <name>yarn.nodemanager.log-dirs</name>
-    <value>/var/log/hadoop-yarn/containers</value>
+    <value>/data01/var/log/yarn/containers</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.local-dirs</name>
+    <value>file:///data01/yarn/nm,file:///data02/yarn/nm</value>
   </property>
 
   <property>
     <description>Where to aggregate logs to.</description>
     <name>yarn.nodemanager.remote-app-log-dir</name>
-    <value>/var/log/hadoop-yarn/apps</value>
+    <value>/data01/var/log/yarn/apps</value>
   </property>
 
   <property>
@@ -232,11 +242,11 @@ cat > hdfs-site.xml << EOL
 <configuration>
   <property>
     <name>dfs.replication</name>
-    <value>1</value>
+    <value>3</value>
   </property>
   <property>
     <name>dfs.namenode.name.dir</name>
-    <value>file:///hdfs/name</value>
+    <value>file:///data01/hdfs/name,file:///data02/hdfs/name</value>
   </property>
   <property>
     <name>dfs.datanode.data.dir</name>
