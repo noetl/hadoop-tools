@@ -1,23 +1,26 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 4 ]; then
-  echo "Usage: ./install-hadoop.sh <master_hostname> <slave_mem> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 5 ]; then
+  echo "Usage: ./install-hadoop.sh <master_hostname> <slave_mem> <slave_disk_cnt> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
 MASTER=$1
 slave_mem=$2
-AWS_ACCESS_KEY_ID=$3
-AWS_SECRET_ACCESS_KEY=$4
+slave_disk_cnt=$3
+AWS_ACCESS_KEY_ID=$4
+AWS_SECRET_ACCESS_KEY=$5
 
 yarn_mem=$[$slave_mem*1024*87/100]
 
 my_hostname=`hostname`
 
 mode="slave"
+host_disk_cnt=$slave_disk_cnt
 if [ "$MASTER" == "$my_hostname" ]; then
   mode="master"
+  host_disk_cnt=1
 fi
 
 echo "MASTER: $MASTER"
@@ -37,31 +40,60 @@ rm -rf hadoop-2.6.4.tar.gz
 # Hive uses jline v2. Lets remove old jline to avoid conflicts
 mv /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar.delme
 
-echo "Waiting for dirs to be mounted..."
+last_disk_prefix="0"
+if [ $host_disk_cnt -gt 9 ]; then last_disk_prefix=""; fi
+last_disk="/data${last_disk_prefix}${host_disk_cnt}"
+echo "last disk: ${last_disk}"
+
+echo "Waiting for ${last_disk} to be mounted..."
 set +e
-while ! grep -qs '/data02' /proc/mounts ; do
-  echo "/data02 not mounted yet. sleep 30"
+while ! grep -qs ${last_disk} /proc/mounts ; do
+  echo "${last_disk} not mounted yet. sleep 30"
   sleep 30
 done
-echo "/data02 is mounted"
+echo "${last_disk} is mounted"
 set -e
 
-mkdir -p /data01/tmp /data02/tmp /data01/var /data02/var
-mkdir -p /data01/hdfs/name /data02/hdfs/name
-mkdir -p /data01/hdfs/data /data02/hdfs/data
-mkdir -p /data01/yarn/nm /data02/yarn/nm
+for ((i=1; i<=host_disk_cnt; i++)); do
+  p="0"
+  if [ $i -gt 9 ]; then p=""; fi
+  data_id=$p$i
+  echo "Creating dirs on /data${data_id}"
+  mkdir -p /data${data_id}/tmp
+  mkdir -p /data${data_id}/hdfs/name
+  mkdir -p /data${data_id}/hdfs/data
+  mkdir -p /data${data_id}/yarn/nm
+
+  chown -R hadoop:hadoop /data${data_id}/tmp
+  chown -R hadoop:hadoop /data${data_id}/hdfs
+  chown -R hadoop:hadoop /data${data_id}/yarn
+  chown -R hadoop:hadoop /data${data_id}/tmp
+
+  chmod 777 /data${data_id}/tmp
+done
+
 mkdir -p /data01/var/log/yarn/containers
 mkdir -p /data01/var/log/hadoop /usr/lib/hadoop/logs
-chown -R hadoop:hadoop /data01/tmp /data02/tmp /data01/var /data02/var
-chown -R hadoop:hadoop /data01/hdfs /data02/hdfs /data01/yarn /data02/yarn
-chown -R hadoop:hadoop /usr/lib/hadoop/logs
-chmod 777 /data01/tmp /data02/tmp
+
+chown -R hadoop:hadoop /data01/var /usr/lib/hadoop/logs
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
 wget -q http://fostercitylab.crabdance.com/usb/noetl-hadoop-tools-1.0.jar
 
 echo "Configuring Hadoop...."
+
+data_dirs="file:///data01/hdfs/data"
+yarn_nm_dirs="/data01/yarn/nm"
+for ((i=2; i<=slave_disk_cnt; i++)); do
+  p="0"
+  if [ $i -gt 9 ]; then p=""; fi
+  data_id=$p$i
+  data_dirs="${data_dirs},file:///data${data_id}/hdfs/data"
+  yarn_nm_dirs="${yarn_nm_dirs},/data${data_id}/yarn/nm"
+done
+echo "data_dirs: $data_dirs"
+echo "yarn_nm_dirs: $yarn_nm_dirs"
 
 cd /usr/lib/hadoop/etc/hadoop
 
@@ -215,7 +247,7 @@ cat > yarn-site.xml << EOL
 
   <property>
     <name>yarn.nodemanager.local-dirs</name>
-    <value>/data01/yarn/nm,/data02/yarn/nm</value>
+    <value>${yarn_nm_dirs}</value>
   </property>
 
   <property>
@@ -250,11 +282,11 @@ cat > hdfs-site.xml << EOL
   </property>
   <property>
     <name>dfs.namenode.name.dir</name>
-    <value>file:///data01/hdfs/name,file:///data02/hdfs/name</value>
+    <value>file:///data01/hdfs/name</value>
   </property>
   <property>
     <name>dfs.datanode.data.dir</name>
-    <value>file:///data01/hdfs/data,file:///data02/hdfs/data</value>
+    <value>${data_dirs}</value>
   </property>
 </configuration>
 EOL

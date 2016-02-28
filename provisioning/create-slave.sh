@@ -2,8 +2,8 @@
 
 set -e
 
-if [ $# -ne 9 ]; then
-  echo "Usage: ./create-slave.sh <group_hash> <master_hostname> <slave_name> <slave_cpu> <slave_mem> <root_password> <network_id> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 11 ]; then
+  echo "Usage: ./create-slave.sh <group_hash> <master_hostname> <slave_name> <slave_cpu> <slave_mem> <slave_disk_cnt> <slave_disk_size> <root_password> <network_id> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
@@ -12,16 +12,17 @@ MASTER=$2
 slave_name=$3
 slave_cpu=$4
 slave_mem=$5
-root_password=$6
-network_id=$7
-AWS_ACCESS_KEY_ID=$8
-AWS_SECRET_ACCESS_KEY=$9
+slave_disk_cnt=$6
+slave_disk_size=$7
+root_password=$8
+network_id=$9
+AWS_ACCESS_KEY_ID=${10}
+AWS_SECRET_ACCESS_KEY=${11}
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Running create-server.sh"
-echo "$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem $network_id"
-server_url=`$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem $network_id`
+server_url=`$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem $slave_disk_cnt $slave_disk_size $network_id`
 echo "server_url: $server_url"
 
 echo "Getting ip address..."
@@ -33,9 +34,8 @@ while [ $is_ip == 0 ]; do
   echo "Running get-ip.sh"
   ip=`$DIR/get-ip.sh $server_url`
   echo "ip: $ip"
-  if [[ $ip =~ ^\"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\"$ ]]; then
+  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
     is_ip=1
-    ip=${ip:1:${#ip}-2}
   fi 
 done
 
@@ -65,6 +65,6 @@ ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
 
 echo "Run install-slave-soft.sh on background"
-cmd="nohup /root/provisioning/install-slave-soft.sh ${MASTER} $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > /root/install-slave-soft.log 2>&1 < /dev/null &"
+cmd="nohup /root/provisioning/install-slave-soft.sh ${MASTER} $slave_mem $slave_disk_cnt ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > /root/install-slave-soft.log 2>&1 < /dev/null &"
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"

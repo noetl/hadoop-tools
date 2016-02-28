@@ -50,7 +50,7 @@ EOL
 
 cat > spark-defaults.conf << EOL
 spark.master yarn
-spark.local.dir /data01/tmp,/data02/tmp
+spark.local.dir /data01/tmp
 spark.eventLog.enabled true
 spark.eventLog.dir hdfs:///var/log/spark/apps
 spark.history.fs.logDirectory hdfs:///var/log/spark/apps

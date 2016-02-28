@@ -6,8 +6,8 @@ if [ -z "$BTOKEN" ]; then
   exit -1
 fi
 
-if [ $# -ne 6 ]; then
-  echo "Usage: ./create-server.sh <group_id> <box_name> <root_pass> <num_of_cpu> <mem_gb> <network_id>"
+if [ $# -ne 8 ]; then
+  echo "Usage: ./create-server.sh <group_id> <box_name> <root_pass> <num_of_cpu> <mem_gb> <disk_cnt> <disk_gb> <network_id>"
   exit -1
 fi
 
@@ -16,10 +16,23 @@ box_name=$2
 root_pass=$3
 cpu=$4
 mem_gb=$5
-network_id=$6
+disk_cnt=$6
+disk_gb=$7
+network_id=$8
 
-# create box
-self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "{
+disk_list=`for ((i=1; i<=$disk_cnt; i++)); do
+  p="0"
+  if [ $i -gt 9 ]; then p=""; fi
+  id=$p$i
+  comma=","
+  if [ $i -eq $disk_cnt ]; then comma=""; fi
+  adj_disk_gb=$disk_gb
+  # add 50 GB to the first disk to store logs /disk01/var/log
+  if [ $i -eq 1 ]; then adj_disk_gb=$[disk_gb+50]; fi
+  echo "{ 'path': '/data$id', 'sizeGB': $adj_disk_gb, 'type': 'partitioned' }${comma}"
+done`
+
+body="{
   'name': '${box_name}',
   'description': '${box_name}',
   'groupId': '${group_id}',
@@ -32,12 +45,12 @@ self_href=`curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: appli
   'type': 'standard',
   'storageType': 'standard',
   'additionalDisks':[
-    { 'path': '/data01', 'sizeGB': 150, 'type': 'partitioned' },
-    { 'path': '/data02', 'sizeGB': 100, 'type': 'partitioned' }
+    $disk_list
   ]
-}" \
-https://api.ctl.io/v2/servers/NOMS/ | jq -r ".links[1].href"`
+}"
 
-echo $self_href
+# echo "$body"
 
-# curl -H "Authorization: Bearer $btoken" https://api.ctl.io${self_href}
+# create box
+curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "$body" \
+  https://api.ctl.io/v2/servers/NOMS/ | jq -r ".links[1].href"

@@ -2,18 +2,10 @@
 
 set -e
 
-if [ $# -ne 13 ]; then
-  echo "Usage: ./create-cluster.sh <ctl_login> <ctl_password> <group_name> <parent_group_id> <N_of_boxes> <master_cpu> <master_mem> <slave_cpu> <slave_mem> <root_passwoed> <network_id> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 15 ]; then
+  echo "Usage: ./create-cluster.sh <ctl_login> <ctl_password> <group_name> <parent_group_id> <N_of_boxes> <master_cpu> <master_mem> <slave_cpu> <slave_mem> <slave_disk_cnt> <slave_disk_size> <root_passwoed> <network_id> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
-
-set +e
-if ! type jq ; then echo "jq not found"; exit 1; fi
-if ! python -c "import paramiko" ; then echo "Python module paramiko not found"; exit 1; fi
-if [ ! -f ~/.ssh/id_rsa.pub ]; then echo "~/.ssh/id_rsa.pub not found"; exit 1; fi
-if ! ping -c 1 10.101.124.1 ; then echo "Can not ping 10.101.124.1 VPN not connected"; exit 1; fi
-echo "All required soft installed"
-set -e
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ctl_login=$1
@@ -25,12 +17,14 @@ master_cpu=$6
 master_mem=$7
 slave_cpu=$8
 slave_mem=$9
-root_password=${10}
-network_id=${11}
-AWS_ACCESS_KEY_ID=${12}
-AWS_SECRET_ACCESS_KEY=${13}
-#ZEPPELIN_NOTEBOOK_S3_BUCKET=${14}
-#ZEPPELIN_NOTEBOOK_S3_USER=${15}
+slave_disk_cnt=${10}
+slave_disk_size=${11}
+root_password=${12}
+network_id=${13}
+AWS_ACCESS_KEY_ID=${14}
+AWS_SECRET_ACCESS_KEY=${15}
+#ZEPPELIN_NOTEBOOK_S3_BUCKET=${16}
+#ZEPPELIN_NOTEBOOK_S3_USER=${17}
 
 echo "-----------------------------------------------"
 echo "ctl_login:             $ctl_login"
@@ -39,9 +33,11 @@ echo "group_name:            $group_name"
 echo "parent_group_id:       $parent_group_id"
 echo "Number of slaves:      $N"
 echo "master_cpu:            $master_cpu"
-echo "master_mem:            $master_mem"
+echo "master_mem_gb:         $master_mem"
 echo "slave_cpu:             $slave_cpu"
-echo "slave_mem:             $slave_mem"
+echo "slave_mem_gb:          $slave_mem"
+echo "slave_disk_cnt:        $slave_disk_cnt"
+echo "slave_disk_size_gb:    $slave_disk_size"
 echo "root_password:         $root_password"
 echo "network_id:            $network_id"
 echo "AWS_ACCESS_KEY_ID:     ${AWS_ACCESS_KEY_ID}"
@@ -54,12 +50,28 @@ echo "Running login.sh"
 . $DIR/login.sh $ctl_login $ctl_password
 echo "done"
 
+echo "Getting Network Gateway..."
+network_gateway=`$DIR/get-network-details.sh ${network_id} | jq -r ".gateway"`
+echo "Network Gateway: ${network_gateway}"
+
+set +e
+if ! type jq ; then echo "jq not found"; exit 1; fi
+if ! python -c "import paramiko" ; then echo "Python module paramiko not found"; exit 1; fi
+echo "All required soft installed"
+if [ ! -f ~/.ssh/id_rsa.pub ]; then echo "~/.ssh/id_rsa.pub not found"; exit 1; fi
+echo "RSA public key is found at ~/.ssh/id_rsa.pub"
+if ! ping -c 1 ${network_gateway} ; then echo "Can not ping network gateway ${network_gateway}, check VPN connection"; exit 1; fi
+echo "VPN is connected"
+set -e
+
 echo "Running create-group.sh"
 group_id=`$DIR/create-group.sh $group_name $parent_group_id`
+echo "-----------------------------------------------"
 echo "group_id: $group_id"
+echo "-----------------------------------------------"
 
 echo "Running create-server.sh"
-server_url=`$DIR/create-server.sh $group_id nn $root_password $master_cpu $master_mem $network_id`
+server_url=`$DIR/create-server.sh $group_id nn $root_password $master_cpu $master_mem 1 1 $network_id`
 echo "server_url: $server_url"
 
 echo "Getting ip address..."
@@ -71,9 +83,8 @@ while [ $is_ip == 0 ]; do
   echo "Running get-ip.sh"
   ip=`$DIR/get-ip.sh $server_url`
   echo "ip: $ip"
-  if [[ $ip =~ ^\"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\"$ ]]; then
+  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
     is_ip=1
-    ip=${ip:1:${#ip}-2}
   fi
 done
 
@@ -95,7 +106,7 @@ mkdir -p $DIR/../log
 echo "Schedule creating slaves"
 for i in `seq 1 $N`; do
   echo "Schedule creating slave dn$i"
-  cmd="$DIR/create-slave.sh $group_id $MASTER dn$i $slave_cpu $slave_mem $root_password $network_id $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
+  cmd="$DIR/create-slave.sh $group_id $MASTER dn$i $slave_cpu $slave_mem $slave_disk_cnt $slave_disk_size $root_password $network_id $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
   nohup $cmd > $DIR/../log/create-slave-$group_name-$i.out 2>&1 < /dev/null &
 done
 echo "Schedule creating slaves done"
@@ -123,7 +134,7 @@ ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
 
 echo "Run install-master-soft.sh on background"
-cmd="nohup /root/provisioning/install-master-soft.sh $N $slave_mem ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > /root/install-master-soft.log 2>&1 < /dev/null &"
+cmd="nohup /root/provisioning/install-master-soft.sh $N $slave_mem $slave_disk_cnt ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > /root/install-master-soft.log 2>&1 < /dev/null &"
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip $cmd
 echo "done"
 
