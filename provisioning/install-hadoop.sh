@@ -63,19 +63,20 @@ for ((i=1; i<=host_disk_cnt; i++)); do
   mkdir -p /data${data_id}/hdfs/name
   mkdir -p /data${data_id}/hdfs/data
   mkdir -p /data${data_id}/yarn/nm
+  mkdir -p /data${data_id}/mapred/local
 
   chown -R hadoop:hadoop /data${data_id}/tmp
   chown -R hadoop:hadoop /data${data_id}/hdfs
   chown -R hadoop:hadoop /data${data_id}/yarn
-  chown -R hadoop:hadoop /data${data_id}/tmp
+  chown -R hadoop:hadoop /data${data_id}/mapred
 
   chmod 777 /data${data_id}/tmp
 done
 
-mkdir -p /data01/var/log/yarn/containers
+mkdir -p /data01/var/log/yarn/containers /var/log/yarn
 mkdir -p /data01/var/log/hadoop /usr/lib/hadoop/logs
 
-chown -R hadoop:hadoop /data01/var /usr/lib/hadoop/logs
+chown -R hadoop:hadoop /data01/var /usr/lib/hadoop/logs /var/log/yarn
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
@@ -85,12 +86,14 @@ echo "Configuring Hadoop...."
 
 data_dirs="file:///data01/hdfs/data"
 yarn_nm_dirs="/data01/yarn/nm"
+mapred_dirs="/data01/mapred/local"
 for ((i=2; i<=slave_disk_cnt; i++)); do
   p="0"
   if [ $i -gt 9 ]; then p=""; fi
   data_id=$p$i
   data_dirs="${data_dirs},file:///data${data_id}/hdfs/data"
   yarn_nm_dirs="${yarn_nm_dirs},/data${data_id}/yarn/nm"
+  mapred_dirs="${mapred_dirs},/data${data_id}/mapred/local"
 done
 echo "data_dirs: $data_dirs"
 echo "yarn_nm_dirs: $yarn_nm_dirs"
@@ -187,6 +190,10 @@ cat > mapred-site.xml << EOL
     <value>${MASTER}:19888</value>
   </property>
   <property>
+    <name>mapreduce.cluster.local.dir</name>
+    <value>${mapred_dirs}</value>
+  </property>
+  <property>
     <name>mapreduce.task.io.sort.mb</name>
     <value>256</value>
   </property>
@@ -253,7 +260,7 @@ cat > yarn-site.xml << EOL
   <property>
     <description>Where to aggregate logs to.</description>
     <name>yarn.nodemanager.remote-app-log-dir</name>
-    <value>hdfs:///var/log/yarn/apps</value>
+    <value>/var/log/yarn/apps</value>
   </property>
 
   <property>
