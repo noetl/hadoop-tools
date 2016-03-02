@@ -178,7 +178,7 @@ su - hadoop -c 'cat >> ~/.bashrc << EOL
 export HIVE_CONF_DIR=/usr/lib/hive/conf
 export TEZ_CONF_DIR=/usr/lib/tez/conf
 export PATH=\$PATH:/usr/lib/hive/bin
-alias hivemr='hive --hiveconf hive.execution.engine=mr'
+alias hivemr="hive --hiveconf hive.execution.engine=mr"
 EOL'
 
 echo "Starting Hiveserver2..."
