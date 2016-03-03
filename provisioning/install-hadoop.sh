@@ -82,6 +82,10 @@ echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
 wget -q http://fostercitylab.crabdance.com/usb/noetl-hadoop-tools-1.0.jar
 
+echo "Adding joda-time to /usr/lib/hadoop/share/hadoop/mapreduce"
+cd /usr/lib/hadoop/share/hadoop/mapreduce/lib
+cp /usr/lib/hadoop/share/hadoop/tools/lib/joda-time-*.jar .
+
 echo "Configuring Hadoop...."
 
 data_dirs="file:///data01/hdfs/data"
