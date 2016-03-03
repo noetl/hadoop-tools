@@ -57,6 +57,18 @@ cat > hbase-site.xml << EOL
     <name>hbase.zookeeper.quorum</name>
     <value>${MASTER}</value>
   </property>
+  <property>
+    <name>hbase.client.retries.number</name>
+    <value>2</value>
+  </property>
+  <property>
+    <name>hbase.rpc.timeout</name>
+    <value>10000</value>
+  </property>
+  <property>
+    <name>zookeeper.recovery.retry</name>
+    <value>2</value>
+  </property>
 </configuration>
 EOL
 
