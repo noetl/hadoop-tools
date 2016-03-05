@@ -268,6 +268,26 @@ cat > yarn-site.xml << EOL
   </property>
 
   <property>
+    <name>yarn.timeline-service.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>yarn.timeline-service.hostname</name>
+    <value>${MASTER}</value>
+  </property>
+
+  <property>
+    <name>yarn.timeline-service.http-cross-origin.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.system-metrics-publisher.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
     <name>yarn.scheduler.minimum-allocation-mb</name>
     <value>1</value>
   </property>
@@ -358,6 +378,10 @@ if [ "$mode" == "master" ]; then
   echo "Starting YARN resourcemanager...."
   su - hadoop -c '/usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop start resourcemanager'
   echo "Starting YARN resourcemanager done"
+
+  echo "Starting YARN timelineserver...."
+  su - hadoop -c '/usr/lib/hadoop/sbin/yarn-daemon.sh --config /usr/lib/hadoop/etc/hadoop start timelineserver'
+  echo "Starting YARN timelineserver done"
 
   echo "Starting JobHistory server...."
   su - hadoop -c '/usr/lib/hadoop/sbin/mr-jobhistory-daemon.sh --config /usr/lib/hadoop/etc/hadoop start historyserver'

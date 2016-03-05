@@ -169,6 +169,14 @@ cat > tez-site.xml << EOL
     <name>tez.am.java.opts</name>
     <value>-Xmx1120m -Xmx1120m</value>
   </property>
+  <property>
+    <name>tez.history.logging.service.class</name>
+    <value>org.apache.tez.dag.history.logging.ats.ATSHistoryLoggingService</value>
+  </property>
+  <property>
+    <name>tez.tez-ui.history-url.base</name>
+    <value>http://${MASTER}/tez-ui/</value>
+  </property>
 </configuration>
 EOL
 
@@ -185,4 +193,18 @@ echo "Starting Hiveserver2..."
 su - hadoop -c 'nohup /usr/lib/hive/bin/hiveserver2 > /data01/var/log/hive/hiveserver2.out 2>&1 < /dev/null &'
 echo "done"
 echo "Hiveserver2       ${MASTER}:10000"
-echo "Hiveserver2 UI    ${MASTER}:10002"
+echo
+
+echo "Installing Tez-UI..."
+yum install -y nginx
+
+mkdir -p /usr/share/nginx/html/tez-ui
+cd /usr/share/nginx/html/tez-ui
+
+wget -q https://repository.apache.org/content/repositories/releases/org/apache/tez/tez-ui/0.8.2/tez-ui-0.8.2.war
+unzip tez-ui-0.8.2.war
+rm -rf tez-ui-0.8.2.war
+
+systemctl start nginx
+echo "done"
+echo "TEZ-UI            http://${MASTER}/tez-ui/"
