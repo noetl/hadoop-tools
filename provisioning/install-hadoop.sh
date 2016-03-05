@@ -282,6 +282,11 @@ cat > yarn-site.xml << EOL
     <value>${yarn_mem}</value>
   </property>
 
+  <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+
 </configuration>
 EOL
 
