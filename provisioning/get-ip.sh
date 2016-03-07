@@ -13,4 +13,12 @@ fi
 
 box_href=$1
 
-curl -s -H "Authorization: Bearer $BTOKEN" https://api.ctl.io${box_href} | jq -r ".details.ipAddresses[].internal"
+resp=`curl -m 10 -s -H "Authorization: Bearer $BTOKEN" https://api.ctl.io${box_href}`
+
+status=`echo $resp | jq -r '.status'`
+
+if [ $status == "active" ]; then
+  echo $resp | jq -r ".details.ipAddresses[].internal"
+else
+  echo $status
+fi

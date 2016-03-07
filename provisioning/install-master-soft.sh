@@ -58,7 +58,7 @@ sl=0
 while [ $nodesCnt == 0 ]; do
   echo "sleep $sl"
   sleep $sl
-  nodesCnt=`curl -s http://${MASTER}:8088/ws/v1/cluster/nodes | jq '.nodes.node | length'`
+  nodesCnt=`curl -m 10 -s http://${MASTER}:8088/ws/v1/cluster/nodes | jq '.nodes.node | length'`
   echo "active slaves count: $nodesCnt"
   sl=30
 done

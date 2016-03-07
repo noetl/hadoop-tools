@@ -52,5 +52,5 @@ body="{
 # echo "$body"
 
 # create box
-curl -s -k -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "$body" \
-  https://api.ctl.io/v2/servers/NOMS/ | jq -r ".links[1].href"
+curl -m 10 -s -H "Authorization: Bearer $BTOKEN" -H "Content-Type: application/json" -X POST -d "$body" \
+  https://api.ctl.io/v2/servers/NOMS/

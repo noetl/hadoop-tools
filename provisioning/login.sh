@@ -6,5 +6,5 @@ if [ $# -ne 2 ]; then
 fi
 
 # login
-export BTOKEN=`curl -s -k -H "Content-Type: application/json" -X POST -d "{'username':'${1}','password':'${2}'}" https://api.ctl.io/v2/authentication/login | jq -r ".bearerToken"`
+export BTOKEN=`curl -m 10 -s -H "Content-Type: application/json" -X POST -d "{'username':'${1}','password':'${2}'}" https://api.ctl.io/v2/authentication/login | jq -r ".bearerToken"`
 echo $BTOKEN

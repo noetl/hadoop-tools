@@ -22,7 +22,13 @@ AWS_SECRET_ACCESS_KEY=${11}
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Running create-server.sh"
-server_url=`$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem $slave_disk_cnt $slave_disk_size $network_id`
+create_server_resp=`$DIR/create-server.sh $group_hash $slave_name $root_password $slave_cpu $slave_mem $slave_disk_cnt $slave_disk_size $network_id`
+echo $create_server_resp
+server_url=`echo $create_server_resp | jq -r '.links[] | select(.rel=="self") | .href'`
+if [ $server_url == "null" ]; then
+  echo "Can not extract server href from create_server_resp"
+  exit 1;
+fi
 echo "server_url: $server_url"
 
 echo "Getting ip address..."

@@ -65,13 +65,30 @@ echo "VPN is connected"
 set -e
 
 echo "Running create-group.sh"
-group_id=`$DIR/create-group.sh $group_name $parent_group_id`
+create_group_resp=`$DIR/create-group.sh $group_name $parent_group_id`
+echo $create_group_resp
+group_status=`echo $create_group_resp | jq -r ".status"`
+if [ $group_status != "active" ]; then
+  echo "Group is not active"
+  exit 1;
+fi
+group_id=`echo $create_group_resp | jq -r ".id"`
+if [ $group_id == "null" ]; then
+  echo "Can not extract group id"
+  exit 1;
+fi
 echo "-----------------------------------------------"
 echo "group_id: $group_id"
 echo "-----------------------------------------------"
 
 echo "Running create-server.sh"
-server_url=`$DIR/create-server.sh $group_id nn $root_password $master_cpu $master_mem 1 1 $network_id`
+create_server_resp=`$DIR/create-server.sh $group_id nn $root_password $master_cpu $master_mem 1 1 $network_id`
+echo $create_server_resp
+server_url=`echo $create_server_resp | jq -r '.links[] | select(.rel=="self") | .href'`
+if [ $server_url == "null" ]; then
+  echo "Can not extract server href from create_server_resp"
+  exit 1;
+fi
 echo "server_url: $server_url"
 
 echo "Getting ip address..."

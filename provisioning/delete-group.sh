@@ -12,5 +12,4 @@ fi
 
 group_id=$1
 
-curl -s -k -H "Authorization: Bearer ${BTOKEN}" -X DELETE \
-https://api.ctl.io/v2/groups/NOMS/$group_id
+curl -m 10 -s -H "Authorization: Bearer ${BTOKEN}" -X DELETE https://api.ctl.io/v2/groups/NOMS/$group_id
