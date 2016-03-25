@@ -1,78 +1,126 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 2 ]; then
-  echo "Usage: ./install-spark.sh <N_of_boxes> <slave_mem>"
+MASTER=`hostname`
+WHOAMI=`whoami`
+SPARK_HOME="/usr/local/spark"
+
+echo "MASTER: $MASTER"
+echo "WHOAMI: $WHOAMI"
+echo "SPARK_HOME: $SPARK_HOME"
+
+# Control will enter here if $SPARK_HOME exists.
+if [[ -d "$SPARK_HOME" || -L "$SPARK_HOME" ]]; then
+  echo "SPARK_HOME folder - $SPARK_HOME already exist"
   exit -1
 fi
 
-N=$1
-slave_mem=$2
-
-yarn_mem=$[slave_mem*1024*87/100]
-spark_mem=$[yarn_mem-896]
-exec_mem=$[spark_mem*10/11]
-exec_mem_over=$[spark_mem-exec_mem]
-
-echo "yarn.nodemanager.resource.memory-mb ${yarn_mem}"
-echo "spark.executor.memory               ${exec_mem}m"
-echo "spark.yarn.executor.memoryOverhead  ${exec_mem_over}"
-
-MASTER=`hostname`
-
-echo "MASTER: $MASTER"
-
 echo "Downloading Spark...."
-cd /usr/lib
-wget -q http://download.nextag.com/apache/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
+sudo mkdir -p $SPARK_HOME
+sudo chown -R $WHOAMI $SPARK_HOME
+cd $SPARK_HOME
+wget -q http://www-us.apache.org/dist/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
 echo "Installing Spark...."
-tar zxf spark-1.6.0-bin-hadoop2.6.tgz
-mv spark-1.6.0-bin-hadoop2.6 spark
-rm -rf spark-1.6.0-bin-hadoop2.6.tgz
+tar zxf spark-1.6.1-bin-hadoop2.6.tgz
+mv spark-1.6.1-bin-hadoop2.6/* ./
+rm -rf spark-1.6.1-bin-hadoop2.6.tgz
+rmdir spark-1.6.1-bin-hadoop2.6
 
-mkdir -p /data01/var/log/spark
-chown hadoop:hadoop /data01/var/log/spark
+echo "Installing Spark...."
+cat > $SPARK_HOME/conf/spark-defaults.conf << EOL
+spark.driver.extraClassPath      /etc/hadoop/conf:/usr/local/hadoop/*:/usr/local/hadoop-hdfs/*:/usr/local/aws/aws-java-sdk/*:/usr/local/aws/emr/emrfs/conf:/usr/local/aws/emr/emrfs/lib/*:/usr/local/aws/emr/emrfs/auxlib/*
+spark.executor.extraClassPath    /etc/hadoop/conf:/usr/local/hadoop/*:/usr/local/hadoop-hdfs/*:/usr/local/aws/aws-java-sdk/*:/usr/local/aws/emr/emrfs/conf:/usr/local/aws/emr/emrfs/lib/*:/usr/local/aws/emr/emrfs/auxlib/*
 
-su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /var/log/spark/apps'
-su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -chmod g+w /var/log/spark/apps'
-
-echo "Configuring Spark...."
-
-cd /usr/lib/spark/conf
-
-cat > spark-env.sh << EOL
-export SPARK_HOME=${SPARK_HOME:-/usr/lib/spark}
-export SPARK_LOG_DIR=${SPARK_LOG_DIR:-/data01/var/log/spark}
-export HADOOP_HOME=${HADOOP_HOME:-/usr/lib/hadoop}
-export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/usr/lib/hadoop/etc/hadoop}
-export HIVE_CONF_DIR=${HIVE_CONF_DIR:-/usr/lib/hive/conf}
-EOL
-
-cat > spark-defaults.conf << EOL
-spark.master yarn
-spark.local.dir /data01/tmp
-spark.eventLog.enabled true
-spark.eventLog.dir hdfs:///var/log/spark/apps
-spark.history.fs.logDirectory hdfs:///var/log/spark/apps
-spark.yarn.historyServer.address ${MASTER}:18080
-spark.history.ui.port 18080
-spark.shuffle.service.enabled true
 spark.driver.extraJavaOptions    -Dfile.encoding=UTF-8
 spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
-spark.driver.extraClassPath     /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
-spark.executor.extraClassPath   /usr/lib/hadoop/etc/hadoop:/usr/lib/hadoop-s3/*
-spark.dynamicAllocation.enabled  true
-spark.executor.memory       ${exec_mem}m
-spark.yarn.executor.memoryOverhead ${exec_mem_over}
 EOL
 
-echo "Configuring Spark done"
-
-su - hadoop -c 'cat >> ~/.bashrc << EOL
-export SPARK_CONF_DIR=/usr/lib/spark/conf
+cat >> ~/.bashrc << EOL
+export SPARK_CONF_DIR=$SPARK_HOME/conf
 export PATH=\$PATH:/usr/lib/spark/bin
-EOL'
+EOL
 
-echo "Starting spark history server...."
-su - hadoop -c '/usr/lib/spark/sbin/start-history-server.sh'
-echo "Starting spark history server done"
+echo "Spark installed"
+
+
+
+
+SPARK_JOBSERVER_HOME="/usr/local/spark-jobserver"
+echo "SPARK_JOBSERVER_HOME: $SPARK_JOBSERVER_HOME"
+
+if [[ -d "$SPARK_JOBSERVER_HOME" || -L "$SPARK_JOBSERVER_HOME" ]]; then
+  echo "SPARK_JOBSERVER_HOME folder - $SPARK_JOBSERVER_HOME already exist"
+  exit -1
+fi
+
+echo "Downloading Spark-jobserver...."
+sudo mkdir -p $SPARK_JOBSERVER_HOME
+sudo chown -R $WHOAMI $SPARK_JOBSERVER_HOME
+cd $SPARK_JOBSERVER_HOME
+
+wget -q http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
+echo "Installing Spark-jobserver...."
+tar zxf spark-jobserver-0.6.1.tar.gz
+rm -rf spark-jobserver-0.6.1.tar.gz
+
+
+cat > $SPARK_JOBSERVER_HOME/emr.sh << EOL
+spark {
+ # spark.master will be passed to each job's JobContext
+master = "spark://$MASTER:7077" #"local[2]"
+jobserver {
+ port = 8090
+ jar-store-rootdir = /tmp/spark-jobserver/jars
+ jobdao = spark.jobserver.io.JobFileDAO
+ filedao {
+   rootdir = /tmp/spark-jobserver/filedao/data
+ }
+}
+# predefined Spark contexts
+contexts {
+ # test {
+ #   num-cpu-cores = 1            # Number of cores to allocate.  Required.
+ #   memory-per-node = 1g         # Executor memory per node, -Xmx style eg 512m, 1G, etc.
+ #   spark.executor.instances = 1
+ # }
+ # define additional contexts here
+}
+# universal context configuration.  These settings can be overridden, see README.md
+context-settings {
+ num-cpu-cores = 2          # Number of cores to allocate.  Required.
+ memory-per-node = 2g         # Executor memory per node, -Xmx style eg 512m, #1G, etc.
+ spark.executor.instances = 2
+ # If you wish to pass any settings directly to the sparkConf as-is, add them here in passthrough,
+ # such as hadoop connection settings that don't use the "spark." prefix
+ passthrough {
+   #es.nodes = "192.1.1.1"
+ }
+}
+# This needs to match SPARK_HOME for cluster SparkContexts to be created successfully
+home = "$SPARK_HOME"
+}
+EOL
+
+cat > $SPARK_JOBSERVER_HOME/settings.sh << EOL
+APP_USER=hadoop
+APP_GROUP=hadoop
+INSTALL_DIR=$SPARK_JOBSERVER_HOME
+LOG_DIR=/tmp/var/log/spark-jobserver
+PIDFILE=spark-jobserver.pid
+JOBSERVER_MEMORY=1G
+SPARK_VERSION=1.6.0
+SPARK_HOME=$SPARK_HOME
+SPARK_CONF_DIR=$SPARK_HOME/conf
+HADOOP_CONF_DIR=/etc/hadoop/conf
+YARN_CONF_DIR=/etc/hadoop/conf
+SCALA_VERSION=2.10.5
+EOL
+
+
+echo "Spark JobServer installed"
+
+echo "To start spark master execute:"
+echo "$SPARK_HOME/sbin/start-master.sh"
+echo "To start spark slave run:"
+echo "$SPARK_HOME/sbin/start-slave.sh  spark://$MASTER:7077"
+
