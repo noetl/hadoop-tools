@@ -64,7 +64,7 @@ tar zxf spark-jobserver-0.6.1.tar.gz
 rm -rf spark-jobserver-0.6.1.tar.gz
 
 
-cat > $SPARK_JOBSERVER_HOME/emr.sh << EOL
+cat > $SPARK_JOBSERVER_HOME/emr.conf << EOL
 spark {
  # spark.master will be passed to each job's JobContext
 master = "spark://$MASTER:7077" #"local[2]"
@@ -122,5 +122,5 @@ echo "Spark JobServer installed"
 echo "To start spark master execute:"
 echo "$SPARK_HOME/sbin/start-master.sh"
 echo "To start spark slave run:"
-echo "$SPARK_HOME/sbin/start-slave.sh  spark://$MASTER:7077"
+echo "$SPARK_HOME/sbin/start-slave.sh spark://$MASTER:7077"
 
