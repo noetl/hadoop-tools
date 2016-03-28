@@ -18,7 +18,7 @@ fi
 # Update /etc/hosts if hostname does not exists.
 sudo sh -c "echo `export TAB=$'\t'` && grep -q `hostname` /etc/hosts || sed -i \"\" -e \"/^127.0.0.1${TAB}localhost.*/ s/$/${TAB}`hostname`/g\" \"/etc/hosts\""
 
-echo "Downloading Spark...."
+echo "Downloading Spark... ."
 sudo mkdir -p $SPARK_HOME
 sudo chown -R $WHOAMI $SPARK_HOME
 cd $SPARK_HOME
@@ -29,7 +29,7 @@ mv spark-1.6.1-bin-hadoop2.6/* ./
 rm -rf spark-1.6.1-bin-hadoop2.6.tgz
 rmdir spark-1.6.1-bin-hadoop2.6
 
-echo "Installing Spark...."
+echo "Configure Spark... ."
 cat > $SPARK_HOME/conf/spark-defaults.conf << EOL
 spark.driver.extraClassPath      /etc/hadoop/conf:/usr/local/hadoop/*:/usr/local/hadoop-hdfs/*:/usr/local/aws/aws-java-sdk/*:/usr/local/aws/emr/emrfs/conf:/usr/local/aws/emr/emrfs/lib/*:/usr/local/aws/emr/emrfs/auxlib/*
 spark.executor.extraClassPath    /etc/hadoop/conf:/usr/local/hadoop/*:/usr/local/hadoop-hdfs/*:/usr/local/aws/aws-java-sdk/*:/usr/local/aws/emr/emrfs/conf:/usr/local/aws/emr/emrfs/lib/*:/usr/local/aws/emr/emrfs/auxlib/*
@@ -38,6 +38,7 @@ spark.driver.extraJavaOptions    -Dfile.encoding=UTF-8
 spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
 EOL
 
+echo "Updating ~/.bashrc... ."
 cat >> ~/.bashrc << EOL
 export SPARK_CONF_DIR=$SPARK_HOME/conf
 export SPARK_HOME=$SPARK_HOME
@@ -61,10 +62,11 @@ sudo chown -R $WHOAMI $SPARK_JOBSERVER_HOME
 cd $SPARK_JOBSERVER_HOME
 wget -q http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
 
-echo "Installing Spark-jobserver...."
+echo "Installing Spark-jobserver... ."
 tar zxf spark-jobserver-0.6.1.tar.gz
 rm -rf spark-jobserver-0.6.1.tar.gz
 
+echo "Configuring Spark-jobserver... ."
 cat > $SPARK_JOBSERVER_HOME/emr.conf << EOL
 spark {
  # spark.master will be passed to each job's JobContext
