@@ -37,12 +37,11 @@ EOL
 
 cat >> ~/.bashrc << EOL
 export SPARK_CONF_DIR=$SPARK_HOME/conf
-export PATH=\$PATH:/usr/lib/spark/bin
+export SPARK_HOME=$SPARK_HOME
+export PATH=\$PATH:$SPARK_HOME/bin
 EOL
 
 echo "Spark installed"
-
-
 
 
 SPARK_JOBSERVER_HOME="/usr/local/spark-jobserver"
@@ -57,12 +56,11 @@ echo "Downloading Spark-jobserver...."
 sudo mkdir -p $SPARK_JOBSERVER_HOME
 sudo chown -R $WHOAMI $SPARK_JOBSERVER_HOME
 cd $SPARK_JOBSERVER_HOME
-
 wget -q http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
+
 echo "Installing Spark-jobserver...."
 tar zxf spark-jobserver-0.6.1.tar.gz
 rm -rf spark-jobserver-0.6.1.tar.gz
-
 
 cat > $SPARK_JOBSERVER_HOME/emr.conf << EOL
 spark {
@@ -102,8 +100,6 @@ home = "$SPARK_HOME"
 EOL
 
 cat > $SPARK_JOBSERVER_HOME/settings.sh << EOL
-APP_USER=hadoop
-APP_GROUP=hadoop
 INSTALL_DIR=$SPARK_JOBSERVER_HOME
 LOG_DIR=/tmp/var/log/spark-jobserver
 PIDFILE=spark-jobserver.pid
@@ -121,6 +117,18 @@ echo "Spark JobServer installed"
 
 echo "To start spark master execute:"
 echo "$SPARK_HOME/sbin/start-master.sh"
+echo ""
 echo "To start spark slave run:"
-echo "$SPARK_HOME/sbin/start-slave.sh spark://$MASTER:7077"
-
+echo "$SPARK_HOME/sbin/start-slave.sh spark://127.0.0.1:7077"
+echo ""
+echo "To start spark job server run:"
+echo "$SPARK_JOBSERVER_HOME/server_start.sh"
+echo ""
+echo "To check jars in the sparkjobserver:"
+echo "curl localhost:8090/jars"
+echo ""
+echo "To check  existing contexts in spark-jobserver:"
+echo "curl localhost:8090/contexts"
+echo ""
+echo "To create a context in spark-jobserver:"
+echo "curl -d "" 'localhost:8090/contexts/test?num-cpu-cores=1&memory-per-node=512m&spark.executor.instances=1&spark.ui.port=4042'"
