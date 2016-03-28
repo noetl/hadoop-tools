@@ -15,6 +15,9 @@ if [[ -d "$SPARK_HOME" || -L "$SPARK_HOME" ]]; then
   exit -1
 fi
 
+# Update /etc/hosts if hostname does not exists.
+sudo sh -c "echo `export TAB=$'\t'` && grep -q `hostname` /etc/hosts || sed -i \"\" -e \"/^127.0.0.1${TAB}localhost.*/ s/$/${TAB}`hostname`/g\" \"/etc/hosts\""
+
 echo "Downloading Spark...."
 sudo mkdir -p $SPARK_HOME
 sudo chown -R $WHOAMI $SPARK_HOME
@@ -113,22 +116,22 @@ SCALA_VERSION=2.10.5
 EOL
 
 
-echo "Spark JobServer installed"
+echo "Spark JobServer installed\n"
 
 echo "To start spark master execute:"
-echo "$SPARK_HOME/sbin/start-master.sh"
-echo ""
+echo "$SPARK_HOME/sbin/start-master.sh\n"
+
 echo "To start spark slave run:"
-echo "$SPARK_HOME/sbin/start-slave.sh spark://127.0.0.1:7077"
-echo ""
+echo "$SPARK_HOME/sbin/start-slave.sh spark://127.0.0.1:7077\n"
+
 echo "To start spark job server run:"
-echo "$SPARK_JOBSERVER_HOME/server_start.sh"
-echo ""
+echo "$SPARK_JOBSERVER_HOME/server_start.sh\n"
+
 echo "To check jars in the sparkjobserver:"
-echo "curl localhost:8090/jars"
-echo ""
+echo "curl localhost:8090/jars\n"
+
 echo "To check  existing contexts in spark-jobserver:"
-echo "curl localhost:8090/contexts"
-echo ""
-echo "To create a context in spark-jobserver:"
-echo "curl -d "" 'localhost:8090/contexts/test?num-cpu-cores=1&memory-per-node=512m&spark.executor.instances=1&spark.ui.port=4042'"
+echo "curl localhost:8090/contexts\n"
+
+echo "To create a context in spark-jobserver specifying the spark monitoring port:"
+echo "curl -d "" 'localhost:8090/contexts/test?num-cpu-cores=1&memory-per-node=512m&spark.executor.instances=1&spark.ui.port=4042'\n"
