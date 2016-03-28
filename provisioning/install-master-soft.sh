@@ -79,5 +79,9 @@ echo "Installing Zeppelin..."
 $DIR/install-zeppelin.sh $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY > $LOG_DIR/install-zeppelin.log 2>&1
 echo "done"
 
+echo "Installing HUE..."
+#$DIR/install-hue.sh > $LOG_DIR/install-hue.log 2>&1
+echo "done"
+
 echo ""
 echo "All software installed successfully"

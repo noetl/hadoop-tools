@@ -20,11 +20,11 @@ echo "mode: $mode"
 
 echo "Downloading HBase...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/hbase/0.98.17/hbase-0.98.17-hadoop2-bin.tar.gz
+wget -q http://download.nextag.com/apache/hbase/0.98.18/hbase-0.98.18-hadoop2-bin.tar.gz
 echo "Installing HBase...."
-tar xzf hbase-0.98.17-hadoop2-bin.tar.gz
-mv hbase-0.98.17-hadoop2 hbase
-rm -rf hbase-0.98.17-hadoop2-bin.tar.gz
+tar xzf hbase-0.98.18-hadoop2-bin.tar.gz
+mv hbase-0.98.18-hadoop2 hbase
+rm -rf hbase-0.98.18-hadoop2-bin.tar.gz
 
 if [ "$mode" == "master" ]; then
   su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /tmp /hbase'
