@@ -23,7 +23,7 @@ sudo mkdir -p $SPARK_HOME
 sudo chown -R $WHOAMI $SPARK_HOME
 cd $SPARK_HOME
 wget -q http://www-us.apache.org/dist/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
-echo "Installing Spark...."
+echo "Installing Spark... ."
 tar zxf spark-1.6.1-bin-hadoop2.6.tgz
 mv spark-1.6.1-bin-hadoop2.6/* ./
 rm -rf spark-1.6.1-bin-hadoop2.6.tgz
@@ -39,13 +39,60 @@ spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
 EOL
 
 echo "Updating ~/.bashrc... ."
-cat >> ~/.bashrc << EOL
-export SPARK_CONF_DIR=$SPARK_HOME/conf
-export SPARK_HOME=$SPARK_HOME
-export PATH=\$PATH:$SPARK_HOME/bin
-EOL
+grep -q '^export SPARK_MASTER_IP=.*' ~/.bashrc
+if [[ $? -eq 0 ]]
+then
+echo 'update SPARK_MASTER_IP'
+sed -i "" -e 's/export SPARK_MASTER_IP=.*/export SPARK_MASTER_IP=127.0.0.1/g' ~/.bashrc
+else
+echo 'insert SPARK_MASTER_IP'
+echo -e "export SPARK_MASTER_IP=127.0.0.1\n$(cat ~/.bashrc)" > ~/.bashrc
+fi
 
-echo "Spark installed"
+grep -q '^export SPARK_LOCAL_IP=.*' ~/.bashrc
+if [[ $? -eq 0 ]]
+then
+echo 'update SPARK_LOCAL_IP'
+sed -i "" -e 's/export SPARK_LOCAL_IP=.*/export SPARK_LOCAL_IP=127.0.0.1/g' ~/.bashrc
+else
+echo 'insert SPARK_LOCAL_IP'
+echo -e "export SPARK_LOCAL_IP=127.0.0.1\n$(cat ~/.bashrc)" > ~/.bashrc
+fi
+
+grep -q '^export SPARK_CONF_DIR=.*' ~/.bashrc
+if [[ $? -eq 0 ]]
+then
+echo 'update SPARK_CONF_DIR'
+sed -i "" -e "s|export SPARK_CONF_DIR=.*|export SPARK_CONF_DIR=${SPARK_HOME}/conf|g" ~/.bashrc
+else
+echo 'insert SPARK_CONF_DIR'
+echo -e "export SPARK_CONF_DIR=${SPARK_HOME}/conf\n$(cat ~/.bashrc)" > ~/.bashrc
+fi
+
+grep -q '^export SPARK_HOME=.*' ~/.bashrc
+if [[ $? -eq 0 ]]
+then
+echo 'update SPARK_HOME'
+sed -i "" -e "s|export SPARK_HOME=.*|export SPARK_HOME=${SPARK_HOME}|g" ~/.bashrc
+else
+echo 'insert SPARK_HOME'
+echo -e "export SPARK_HOME=${SPARK_HOME}\n$(cat ~/.bashrc)" > ~/.bashrc
+fi
+
+grep -q -e "^export PATH=.*:$SPARK_HOME/bin.*" -e '^export PATH=.*:$SPARK_HOME/bin.*' ~/.bashrc
+if [[ $? -eq 1 ]]
+then
+echo 'update PATH SPARK_HOME/bin'
+sed -i "" -e "/^export PATH=.*/ s|$|:$SPARK_HOME/bin|g" ~/.bashrc
+fi
+
+#cat >> ~/.bashrc << EOL
+#export SPARK_CONF_DIR=$SPARK_HOME/conf
+#export SPARK_HOME=$SPARK_HOME
+#export PATH=\$PATH:$SPARK_HOME/bin
+#EOL
+
+echo -e "Spark installed\n"
 
 
 SPARK_JOBSERVER_HOME="/usr/local/spark-jobserver"
@@ -118,22 +165,22 @@ SCALA_VERSION=2.10.5
 EOL
 
 
-echo "Spark JobServer installed\n"
+echo -e "Spark JobServer installed\n"
 
 echo "To start spark master execute:"
-echo "$SPARK_HOME/sbin/start-master.sh\n"
+echo -e "$SPARK_HOME/sbin/start-master.sh\n"
 
 echo "To start spark slave run:"
-echo "$SPARK_HOME/sbin/start-slave.sh spark://127.0.0.1:7077\n"
+echo -e "$SPARK_HOME/sbin/start-slave.sh spark://127.0.0.1:7077\n"
 
 echo "To start spark job server run:"
-echo "$SPARK_JOBSERVER_HOME/server_start.sh\n"
+echo -e "$SPARK_JOBSERVER_HOME/server_start.sh\n"
 
 echo "To check jars in the sparkjobserver:"
-echo "curl localhost:8090/jars\n"
+echo -e "curl localhost:8090/jars\n"
 
 echo "To check  existing contexts in spark-jobserver:"
-echo "curl localhost:8090/contexts\n"
+echo -e "curl localhost:8090/contexts\n"
 
 echo "To create a context in spark-jobserver specifying the spark monitoring port:"
-echo "curl -d "" 'localhost:8090/contexts/test?num-cpu-cores=1&memory-per-node=512m&spark.executor.instances=1&spark.ui.port=4042'\n"
+echo -e "curl -d \"\" 'localhost:8090/contexts/test?num-cpu-cores=1&memory-per-node=512m&spark.executor.instances=1&spark.ui.port=4042'\n"
