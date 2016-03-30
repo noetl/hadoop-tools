@@ -357,6 +357,9 @@ cp -n /usr/lib/hadoop/share/hadoop/tools/lib/*aws* \
   /usr/lib/hadoop/share/hadoop/mapreduce/noetl-hadoop-tools-*.jar \
   /usr/lib/hadoop-s3/
 
+mkdir -p /etc/hadoop
+ln -s /usr/lib/hadoop/etc/hadoop /etc/hadoop/conf
+
 # Spark shuffle service jar
 wget -q http://www.noetl.io/spark-1.6.0-yarn-shuffle.jar -P /usr/lib/hadoop/share/hadoop/yarn/lib
 

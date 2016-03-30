@@ -124,6 +124,9 @@ cat > hive-site.xml << EOL
 </configuration>
 EOL
 
+mkdir -p /etc/hive
+ln -s /usr/lib/hive/conf /etc/hive/conf
+
 echo "Configuring Hive done"
 
 # Tez

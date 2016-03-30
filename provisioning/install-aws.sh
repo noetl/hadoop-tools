@@ -11,6 +11,7 @@ AWS_ACCESS_KEY_ID=${1}
 AWS_SECRET_ACCESS_KEY=${2}
 
 echo "Installing aws..."
+yum -y install python-setuptools
 easy_install pip
 pip install --upgrade awscli
 echo "done"
