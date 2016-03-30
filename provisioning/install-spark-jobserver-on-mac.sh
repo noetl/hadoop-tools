@@ -38,6 +38,7 @@ spark.driver.extraJavaOptions    -Dfile.encoding=UTF-8
 spark.executor.extraJavaOptions  -Dfile.encoding=UTF-8
 EOL
 
+set +e
 echo "Updating ~/.bashrc... ."
 grep -q '^export SPARK_MASTER_IP=.*' ~/.bashrc
 if [[ $? -eq 0 ]]
@@ -86,6 +87,8 @@ echo 'update PATH SPARK_HOME/bin'
 sed -i "" -e "/^export PATH=.*/ s|$|:$SPARK_HOME/bin|g" ~/.bashrc
 fi
 
+source ~/.bashrc
+
 #cat >> ~/.bashrc << EOL
 #export SPARK_CONF_DIR=$SPARK_HOME/conf
 #export SPARK_HOME=$SPARK_HOME
@@ -94,6 +97,8 @@ fi
 
 echo -e "Spark installed\n"
 
+
+set -e
 
 SPARK_JOBSERVER_HOME="/usr/local/spark-jobserver"
 echo "SPARK_JOBSERVER_HOME: $SPARK_JOBSERVER_HOME"
