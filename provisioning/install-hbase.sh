@@ -8,6 +8,7 @@ fi
 
 MASTER=$1
 my_hostname=`hostname`
+version="0.98.18"
 
 mode="slave"
 if [ "$MASTER" == "$my_hostname" ]; then
@@ -20,11 +21,11 @@ echo "mode: $mode"
 
 echo "Downloading HBase...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/hbase/0.98.18/hbase-0.98.18-hadoop2-bin.tar.gz
+wget -q http://download.nextag.com/apache/hbase/${version}/hbase-${version}-hadoop2-bin.tar.gz
 echo "Installing HBase...."
-tar xzf hbase-0.98.18-hadoop2-bin.tar.gz
-mv hbase-0.98.18-hadoop2 hbase
-rm -rf hbase-0.98.18-hadoop2-bin.tar.gz
+tar xzf hbase-${version}-hadoop2-bin.tar.gz
+mv hbase-${version}-hadoop2 hbase
+rm -rf hbase-${version}-hadoop2-bin.tar.gz
 
 if [ "$mode" == "master" ]; then
   su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /tmp /hbase'
@@ -32,6 +33,12 @@ fi
 
 mkdir -p /data01/var/log/hbase
 chown hadoop:hadoop /data01/var/log/hbase
+
+# add links without version to common hbase jars
+cd /usr/lib/hbase/lib
+ln -s hbase-common-${version}-hadoop2.jar hbase-common.jar
+ln -s hbase-client-${version}-hadoop2.jar hbase-client.jar
+ln -s hbase-protocol-${version}-hadoop2.jar hbase-protocol.jar
 
 echo "Configuring HBase...."
 
