@@ -31,7 +31,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Downloading Hadoop...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
+curl -f -O http://download.nextag.com/apache/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
 echo "Installing Hadoop...."
 tar xzf hadoop-2.6.4.tar.gz
 mv hadoop-2.6.4 hadoop
@@ -80,7 +80,7 @@ chown -R hadoop:hadoop /data01/var /usr/lib/hadoop/logs /var/log/yarn
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
-wget -q http://fostercitylab.crabdance.com/usb/noetl-hadoop-tools-1.0.jar
+curl -f -O http://fostercitylab.crabdance.com/usb/noetl-hadoop-tools-1.0.jar
 
 echo "Adding joda-time to /usr/lib/hadoop/share/hadoop/mapreduce"
 cd /usr/lib/hadoop/share/hadoop/mapreduce/lib
@@ -361,7 +361,7 @@ mkdir -p /etc/hadoop
 ln -s /usr/lib/hadoop/etc/hadoop /etc/hadoop/conf
 
 # Spark shuffle service jar
-wget -q http://www.noetl.io/spark-1.6.0-yarn-shuffle.jar -P /usr/lib/hadoop/share/hadoop/yarn/lib
+curl -f -O http://www.noetl.io/spark-1.6.0-yarn-shuffle.jar -P /usr/lib/hadoop/share/hadoop/yarn/lib
 
 echo "Stop and disable firewall"
 systemctl stop firewalld

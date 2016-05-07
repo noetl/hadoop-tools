@@ -24,7 +24,7 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Spark...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
+curl -f -O http://download.nextag.com/apache/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
 echo "Installing Spark...."
 tar zxf spark-1.6.0-bin-hadoop2.6.tgz
 mv spark-1.6.0-bin-hadoop2.6 spark

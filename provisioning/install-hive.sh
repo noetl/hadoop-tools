@@ -12,14 +12,14 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Hive...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
+curl -f -O http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
 echo "Installing Hive...."
 tar xzf apache-hive-1.2.1-bin.tar.gz
 mv apache-hive-1.2.1-bin hive
 rm -rf apache-hive-1.2.1-bin.tar.gz
 
 echo "Installing mysql-connector-java...."
-wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
+curl -f -O https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
 tar zxf mysql-connector-java-5.1.38.tar.gz
 cp mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/lib/hive/lib/
 rm -rf mysql-connector-java-5.1.38 zxf mysql-connector-java-5.1.38.tar.gz
@@ -132,8 +132,8 @@ echo "Configuring Hive done"
 # Tez
 echo "Installing Tez...."
 cd /usr/lib
-wget -q http://www.noetl.io/tez-0.8.2.tar.gz
-wget -q http://www.noetl.io/tez-0.8.2-minimal.tar.gz
+curl -f -O http://www.noetl.io/tez-0.8.2.tar.gz
+curl -f -O http://www.noetl.io/tez-0.8.2-minimal.tar.gz
 
 mkdir tez-full
 cd tez-full
@@ -204,7 +204,7 @@ yum install -y nginx
 mkdir -p /usr/share/nginx/html/tez-ui
 cd /usr/share/nginx/html/tez-ui
 
-wget -q https://repository.apache.org/content/repositories/releases/org/apache/tez/tez-ui/0.8.2/tez-ui-0.8.2.war
+curl -f -O https://repository.apache.org/content/repositories/releases/org/apache/tez/tez-ui/0.8.2/tez-ui-0.8.2.war
 unzip tez-ui-0.8.2.war
 rm -rf tez-ui-0.8.2.war
 

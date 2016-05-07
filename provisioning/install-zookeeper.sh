@@ -8,7 +8,7 @@ fi
 
 echo "Downloading Zookeeper...."
 cd /usr/lib
-wget -q http://download.nextag.com/apache/zookeeper/zookeeper-3.4.8/zookeeper-3.4.8.tar.gz
+curl -f -O http://download.nextag.com/apache/zookeeper/zookeeper-3.4.8/zookeeper-3.4.8.tar.gz
 echo "Installing Zookeeper...."
 tar xzf zookeeper-3.4.8.tar.gz
 mv zookeeper-3.4.8 zookeeper

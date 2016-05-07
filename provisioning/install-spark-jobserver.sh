@@ -14,7 +14,7 @@ echo "Downloading Spark-jobserver...."
 cd /usr/lib
 mkdir spark-jobserver
 cd spark-jobserver
-wget -q http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
+curl -f -O http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
 echo "Installing Spark-jobserver...."
 tar zxf spark-jobserver-0.6.1.tar.gz
 rm -rf spark-jobserver-0.6.1.tar.gz

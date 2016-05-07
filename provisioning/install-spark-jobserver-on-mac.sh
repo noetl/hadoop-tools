@@ -22,7 +22,7 @@ echo "Downloading Spark... ."
 sudo mkdir -p $SPARK_HOME
 sudo chown -R $WHOAMI $SPARK_HOME
 cd $SPARK_HOME
-wget -q http://www-us.apache.org/dist/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
+curl -f -O http://www-us.apache.org/dist/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
 echo "Installing Spark... ."
 tar zxf spark-1.6.1-bin-hadoop2.6.tgz
 mv spark-1.6.1-bin-hadoop2.6/* ./
@@ -112,7 +112,7 @@ echo "Downloading Spark-jobserver...."
 sudo mkdir -p $SPARK_JOBSERVER_HOME
 sudo chown -R $WHOAMI $SPARK_JOBSERVER_HOME
 cd $SPARK_JOBSERVER_HOME
-wget -q http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
+curl -f -O http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
 
 echo "Installing Spark-jobserver... ."
 tar zxf spark-jobserver-0.6.1.tar.gz

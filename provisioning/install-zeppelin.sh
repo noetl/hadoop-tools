@@ -17,7 +17,7 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Zeppelin...."
 cd /usr/lib
-#wget -q http://download.nextag.com/apache/incubator/zeppelin/0.5.6-incubating/zeppelin-0.5.6-incubating-bin-all.tgz
+#curl -f -O http://download.nextag.com/apache/incubator/zeppelin/0.5.6-incubating/zeppelin-0.5.6-incubating-bin-all.tgz
 aws s3 cp s3://nomis-amsterdam-datamarts/zeppelin-0.6.0/zeppelin-0.6.0-incubating-SNAPSHOT.tar.gz /usr/lib/ --endpoint-url https://canada.os.ctl.io/
 echo "Installing Zeppelin...."
 tar xzf zeppelin-0.6.0-incubating-SNAPSHOT.tar.gz

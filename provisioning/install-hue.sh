@@ -20,7 +20,7 @@ echo "All prerequisites were installed"
 
 echo "Downloading HUE...."
 cd /usr/lib
-wget -q https://dl.dropboxusercontent.com/u/730827/hue/releases/3.9.0/hue-3.9.0.tgz
+curl -f -O https://dl.dropboxusercontent.com/u/730827/hue/releases/3.9.0/hue-3.9.0.tgz
 echo "Unpacking HUE...."
 tar xzf hue-3.9.0.tgz
 rm -rf hue-3.9.0.tgz
