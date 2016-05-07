@@ -8,7 +8,7 @@ fi
 
 MASTER=$1
 my_hostname=`hostname`
-version="0.98.18"
+version="0.98.19"
 
 mode="slave"
 if [ "$MASTER" == "$my_hostname" ]; then
