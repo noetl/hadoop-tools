@@ -21,7 +21,7 @@ echo "mode: $mode"
 
 echo "Downloading HBase...."
 cd /usr/lib
-curl -f -O http://download.nextag.com/apache/hbase/${version}/hbase-${version}-hadoop2-bin.tar.gz
+curl -f -O http://www.noetl.io/hbase-${version}-hadoop2-bin.tar.gz
 echo "Installing HBase...."
 tar xzf hbase-${version}-hadoop2-bin.tar.gz
 mv hbase-${version}-hadoop2 hbase
