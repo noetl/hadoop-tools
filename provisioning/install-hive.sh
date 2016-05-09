@@ -19,7 +19,7 @@ mv apache-hive-1.2.1-bin hive
 rm -rf apache-hive-1.2.1-bin.tar.gz
 
 echo "Installing mysql-connector-java...."
-curl -f -O https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
+wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
 tar zxf mysql-connector-java-5.1.38.tar.gz
 cp mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/lib/hive/lib/
 rm -rf mysql-connector-java-5.1.38 zxf mysql-connector-java-5.1.38.tar.gz
