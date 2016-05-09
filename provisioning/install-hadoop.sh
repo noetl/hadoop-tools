@@ -80,7 +80,7 @@ chown -R hadoop:hadoop /data01/var /usr/lib/hadoop/logs /var/log/yarn
 
 echo "Download noetl-hadoop-tools-1.0.jar"
 cd /usr/lib/hadoop/share/hadoop/mapreduce
-curl -f -O http://fostercitylab.crabdance.com/usb/noetl-hadoop-tools-1.0.jar
+curl -f -O http://www.noetl.io/noetl-hadoop-tools-1.0.jar
 
 echo "Adding joda-time to /usr/lib/hadoop/share/hadoop/mapreduce"
 cd /usr/lib/hadoop/share/hadoop/mapreduce/lib
