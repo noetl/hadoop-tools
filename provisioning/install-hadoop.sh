@@ -361,7 +361,8 @@ mkdir -p /etc/hadoop
 ln -s /usr/lib/hadoop/etc/hadoop /etc/hadoop/conf
 
 # Spark shuffle service jar
-curl -f -O http://www.noetl.io/spark-1.6.0-yarn-shuffle.jar -P /usr/lib/hadoop/share/hadoop/yarn/lib
+cd /usr/lib/hadoop/share/hadoop/yarn/lib
+curl -f -O http://www.noetl.io/spark-1.6.0-yarn-shuffle.jar
 
 echo "Stop and disable firewall"
 systemctl stop firewalld
