@@ -41,14 +41,14 @@ EOL
 
 cat > emr.conf << EOL
 spark {
-# spark.master will be passed to each job's JobContext
+ # spark.master will be passed to each job's JobContext
 master = "yarn-client"
 jobserver {
  port = 8090
- jar-store-rootdir = /data01/var/spark-jobserver/jars
+ jar-store-rootdir = /mnt/tmp/spark-jobserver/jars
  jobdao = spark.jobserver.io.JobFileDAO
  filedao {
-   rootdir = /data01/var/spark-jobserver/filedao/data
+   rootdir = /mnt/tmp/spark-jobserver/filedao/data
  }
 }
 # predefined Spark contexts
@@ -62,12 +62,18 @@ contexts {
 }
 # universal context configuration.  These settings can be overridden, see README.md
 context-settings {
- num-cpu-cores = 2          # Number of cores to allocate.  Required.
- memory-per-node = 2g         # Executor memory per node, -Xmx style eg 512m, #1G, etc.
  spark.dynamicAllocation.enabled = true
+ spark.executor.memory = 48442M
+ spark.yarn.executor.memoryOverhead = 4834
+ #num-cpu-cores = 4          # Number of cores to allocate.  Required.
+ #memory-per-node = 8g         # Executor memory per node, -Xmx style eg 512m, #1G, etc.
+ #spark.executor.instances = 2
  # If you wish to pass any settings directly to the sparkConf as-is, add them here in passthrough,
  # such as hadoop connection settings that don't use the "spark." prefix
  passthrough {
+   spark.dynamicAllocation.enabled = true
+   spark.executor.memory = 48442M
+   spark.yarn.executor.memoryOverhead = 4834
    #es.nodes = "192.1.1.1"
  }
 }
