@@ -2,7 +2,7 @@
 set -e
 
 if [ $# -ne 0 ]; then
-  echo "Usage: ./install-spark-jobserver.sh"
+  echo "Usage: ./install-spark-jobserver-emr.sh"
   exit -1
 fi
 
