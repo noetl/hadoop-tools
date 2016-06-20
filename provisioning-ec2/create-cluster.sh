@@ -16,6 +16,8 @@ if ! type jq ; then echo "jq not found"; exit 1; fi
 echo "All required soft installed"
 if [ ! -f ~/.ssh/id_rsa.pub ]; then echo "~/.ssh/id_rsa.pub not found"; exit 1; fi
 echo "RSA public key is found at ~/.ssh/id_rsa.pub"
+if [ ! -f ~/.ssh/data-key.pem ]; then echo "~/.ssh/data-key.pem not found"; exit 1; fi
+echo "~/.ssh/data-key.pem is found"
 set -e
 
 echo "Running create-server.sh"
