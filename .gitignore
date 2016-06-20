@@ -7,3 +7,4 @@ target
 .project
 .pydevproject
 log
+log-ec2

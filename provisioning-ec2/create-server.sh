@@ -4,7 +4,7 @@ set -e
 cat > /tmp/aws-spec.json << EOL
 {
   "ImageId": "ami-f303fb93",
-  "KeyName": "spark2",
+  "KeyName": "data-key",
   "SecurityGroupIds": [ "sg-737d4d16" ],
   "InstanceType": "r3.large",
   "SubnetId": "subnet-2550fe52",
@@ -14,14 +14,14 @@ cat > /tmp/aws-spec.json << EOL
 }
 EOL
 
-spot_resp=`aws ec2 request-spot-instances \
+spot_resp=$(aws ec2 request-spot-instances \
 --spot-price 2.99 \
 --instance-count 1 \
---launch-group alex_grp \
+--launch-group spark_grp \
 --launch-specification file:///tmp/aws-spec.json \
---region us-west-2 --profile n_aws`
+--region us-west-2 --profile n_aws)
 
-requesId=`echo $spot_resp | jq -r ".SpotInstanceRequests[0].SpotInstanceRequestId"`
+requesId=$(echo $spot_resp | jq -r ".SpotInstanceRequests[0].SpotInstanceRequestId")
 echo "requesId: $requesId"
 
 state="none"
@@ -29,39 +29,53 @@ while [ $state != "active" ]; do
   echo "sleep 30"
   sleep 30
 
-  spot_desc=`aws ec2 describe-spot-instance-requests \
+  spot_desc=$(aws ec2 describe-spot-instance-requests \
   --spot-instance-request-ids $requesId \
-  --region us-west-2 --profile n_aws`
+  --region us-west-2 --profile n_aws)
 
-  state=`echo $spot_desc | jq -r ".SpotInstanceRequests[0].State"`
+  state=$(echo $spot_desc | jq -r ".SpotInstanceRequests[0].State")
   echo "SpotInstanceRequest state: $state"
 done
 
-instanceId=`echo $spot_desc | jq -r ".SpotInstanceRequests[0].InstanceId"`
+instanceId=$(echo $spot_desc | jq -r ".SpotInstanceRequests[0].InstanceId")
 echo "instanceId: $instanceId"
 
 inst_state="none"
+sleep_t=0
 while [ $inst_state != "16" ]; do
-  echo "sleep 20"
-  sleep 20
+  echo "sleep $sleep_t"
+  sleep $sleep_t
 
-  inst_desc=`aws ec2 describe-instances \
+  inst_desc=$(aws ec2 describe-instances \
   --instance-ids $instanceId \
-  --region us-west-2 --profile n_aws`
+  --region us-west-2 --profile n_aws)
 
-  inst_state=`echo $inst_desc | jq -r ".Reservations[0].Instances[0].State.Code"`
+  inst_state=$(echo $inst_desc | jq -r ".Reservations[0].Instances[0].State.Code")
   echo "Instance state code: $inst_state"
+  sleep_t=10
 done
 
-server_pub_ip=`echo $inst_desc | jq -r ".Reservations[0].Instances[0].PublicIpAddress"`
+server_pub_ip=$(echo $inst_desc | jq -r ".Reservations[0].Instances[0].PublicIpAddress")
 echo "server_pub_ip: $server_pub_ip"
-server_pub_name=`echo $inst_desc | jq -r ".Reservations[0].Instances[0].PublicDnsName"`
+server_pub_name=$(echo $inst_desc | jq -r ".Reservations[0].Instances[0].PublicDnsName")
 echo "server_pub_name: $server_pub_name"
 
-server_ip=`echo $inst_desc | jq -r ".Reservations[0].Instances[0].PrivateIpAddress"`
-echo "server_ip: $server_ip"
-server_name=`echo $inst_desc | jq -r ".Reservations[0].Instances[0].PrivateDnsName"`
-echo "server_name: $server_name"
+server_priv_ip=$(echo $inst_desc | jq -r ".Reservations[0].Instances[0].PrivateIpAddress")
+echo "server_priv_ip: $server_priv_ip"
+server_priv_name=$(echo $inst_desc | jq -r ".Reservations[0].Instances[0].PrivateDnsName")
+echo "server_priv_name: $server_priv_name"
+
+set +e
+ssh_code="-1"
+sleep_t=0
+while [ $ssh_code != "0" ]; do
+  echo "sleep $sleep_t for server to settle down"
+  sleep $sleep_t
+  ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$server_pub_ip exit
+  ssh_code=$?
+  sleep_t=10
+done
+set -e
 
 echo $server_pub_ip
-echo $server_name
+echo $server_priv_name
