@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 1 ]; then
-  echo "Usage: ./create-cluster.sh <N_of_boxes>"
+if [ $# -ne 3 ]; then
+  echo "Usage: ./create-cluster.sh <N_of_boxes> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
 N=$1
+AWS_ACCESS_KEY_ID=$2
+AWS_SECRET_ACCESS_KEY=$3
+
 cluster_name="spark${1}"
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -34,7 +37,7 @@ mkdir -p $DIR/../log-ec2
 echo "Schedule creating slaves"
 for i in $(seq 1 $N); do
   echo "Schedule creating slave dn$i"
-  cmd="$DIR/create-slave.sh $master_priv_name"
+  cmd="$DIR/create-slave.sh $master_priv_name $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
   nohup $cmd > $DIR/../log-ec2/create-slave-$cluster_name-$i.out 2>&1 < /dev/null &
 done
 echo "Schedule creating slaves done"
@@ -47,6 +50,11 @@ echo "done"
 
 echo "Running add-users.sh"
 cmd="/tmp/provisioning-ec2/add-users.sh"
+ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+echo "done"
+
+echo "Run install-master-soft.sh on background"
+cmd="nohup /tmp/provisioning-ec2/install-master-soft.sh $N $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY > /tmp/log/install-master-soft.log 2>&1 < /dev/null &"
 ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
 echo "done"
 

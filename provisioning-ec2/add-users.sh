@@ -6,6 +6,9 @@ if [ $# -ne 0 ]; then
   exit -1
 fi
 
+LOG_DIR="/tmp/log"
+mkdir -p $LOG_DIR
+
 echo "Adding hadoop user..."
 sudo useradd hadoop
 sudo gpasswd -a hadoop wheel
