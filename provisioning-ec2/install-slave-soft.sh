@@ -8,7 +8,7 @@ if [ $# -ne 3 ]; then
 fi
 
 MASTER=$1
-slave_mem=8
+slave_mem=60
 slave_disk_cnt=1
 AWS_ACCESS_KEY_ID=$2
 AWS_SECRET_ACCESS_KEY=$3

@@ -5,6 +5,14 @@ export TEZ_JARS=/usr/lib/tez
 # Add tez into HADOOP_CLASSPATH
 export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:${TEZ_CONF_DIR}:${TEZ_JARS}/*:${TEZ_JARS}/lib/*
 
+export HADOOP_LIBEXEC_DIR=/usr/lib/hadoop/libexec
+export HADOOP_LOG_DIR=/mnt/var/log/hadoop
+
+export HADOOP_COMMON_HOME=/usr/lib/hadoop
+export HADOOP_HDFS_HOME=/usr/lib/hadoop-hdfs
+export HADOOP_MAPRED_HOME=/usr/lib/hadoop-mapreduce
+export HADOOP_YARN_HOME=/usr/lib/hadoop-yarn
+
 export HADOOP_CLASSPATH="$HADOOP_CLASSPATH:/usr/lib/hadoop-lzo/lib/*"
 export JAVA_LIBRARY_PATH="$JAVA_LIBRARY_PATH:/usr/lib/hadoop-lzo/lib/native"
 

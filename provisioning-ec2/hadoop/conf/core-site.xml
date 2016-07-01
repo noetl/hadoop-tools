@@ -96,6 +96,11 @@
     </property>
 
     <property>
+        <name>hadoop.proxyuser.hadoop.hosts</name>
+        <value>*</value>
+    </property>
+
+    <property>
         <name>hadoop.proxyuser.hadoop.groups</name>
         <value>*</value>
     </property>
@@ -108,11 +113,6 @@
     <property>
         <name>fs.s3.buckets.create.region</name>
         <value>us-west-2</value>
-    </property>
-
-    <property>
-        <name>hadoop.proxyuser.hadoop.hosts</name>
-        <value>*</value>
     </property>
 
     <property>

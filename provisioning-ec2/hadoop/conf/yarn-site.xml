@@ -62,7 +62,7 @@
     <property>
         <description>Where to store container logs.</description>
         <name>yarn.nodemanager.log-dirs</name>
-        <value>/var/log/hadoop-yarn/containers</value>
+        <value>/mnt/var/log/hadoop-yarn/containers</value>
     </property>
 
     <property>
@@ -98,16 +98,6 @@
     </property>
 
     <property>
-        <name>yarn.nodemanager.address</name>
-        <value>${yarn.nodemanager.hostname}:8041</value>
-    </property>
-
-    <property>
-        <name>yarn.nodemanager.container-metrics.enable</name>
-        <value>false</value>
-    </property>
-
-    <property>
         <name>yarn.scheduler.increment-allocation-mb</name>
         <value>32</value>
     </property>
@@ -133,58 +123,13 @@
     </property>
 
     <property>
-        <name>yarn.resourcemanager.client.thread-count</name>
-        <value>64</value>
-    </property>
-
-    <property>
-        <name>yarn.nodemanager.resource.cpu-vcores</name>
-        <value>16</value>
-    </property>
-
-    <property>
-        <name>yarn.resourcemanager.resource-tracker.client.thread-count</name>
-        <value>64</value>
-    </property>
-
-    <property>
-        <name>yarn.nodemanager.container-manager.thread-count</name>
-        <value>64</value>
-    </property>
-
-    <property>
-        <name>yarn.resourcemanager.scheduler.client.thread-count</name>
-        <value>64</value>
-    </property>
-
-    <property>
-        <name>yarn.scheduler.maximum-allocation-mb</name>
-        <value>54272</value>
-    </property>
-
-    <property>
-        <name>yarn.nodemanager.localizer.client.thread-count</name>
-        <value>20</value>
-    </property>
-
-    <property>
         <name>yarn.log-aggregation.retain-seconds</name>
         <value>172800</value>
     </property>
 
     <property>
-        <name>yarn.nodemanager.localizer.fetch.thread-count</name>
-        <value>20</value>
-    </property>
-
-    <property>
         <name>yarn.nodemanager.resource.memory-mb</name>
-        <value>54272</value>
-    </property>
-
-    <property>
-        <name>yarn.scheduler.maximum-allocation-vcores</name>
-        <value>80</value>
+        <value>${YARN_MEM}</value>
     </property>
 
     <property>
@@ -203,17 +148,7 @@
     </property>
 
     <property>
-        <name>yarn.label.enabled</name>
-        <value>true</value>
-    </property>
-
-    <property>
-        <name>yarn.app.mapreduce.am.labels</name>
-        <value>CORE</value>
-    </property>
-
-    <property>
-        <name>yarn.nodemanager.labels</name>
-        <value>MASTER</value>
+        <name>yarn.nodemanager.vmem-check-enabled</name>
+        <value>false</value>
     </property>
 </configuration>

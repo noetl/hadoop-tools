@@ -6,7 +6,7 @@ cat > /tmp/aws-spec.json << EOL
   "ImageId": "ami-f303fb93",
   "KeyName": "data-key",
   "SecurityGroupIds": [ "sg-737d4d16" ],
-  "InstanceType": "r3.large",
+  "InstanceType": "r3.2xlarge",
   "SubnetId": "subnet-2550fe52",
   "Placement": {
     "AvailabilityZone": "us-west-2b"
