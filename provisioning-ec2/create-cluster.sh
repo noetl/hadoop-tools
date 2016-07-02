@@ -52,6 +52,11 @@ echo "Copying provisioning scripts to $ip"
 scp -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $DIR ec2-user@$ip:/tmp/
 echo "done"
 
+echo "Running mount-disks.sh"
+cmd="/tmp/provisioning-ec2/mount-disks.sh"
+ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+echo "done"
+
 echo "Running add-users.sh"
 cmd="/tmp/provisioning-ec2/add-users.sh"
 ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd

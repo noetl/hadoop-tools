@@ -18,7 +18,8 @@ cat > /tmp/aws-spec.json << EOL
   "SubnetId": "subnet-2550fe52",
   "Placement": {
     "AvailabilityZone": "us-west-2b"
-  }
+  },
+  "BlockDeviceMappings": [ {"VirtualName": "ephemeral0", "DeviceName": "/dev/xvdb"} ]
 }
 EOL
 
@@ -84,6 +85,8 @@ while [ $ssh_code != "0" ]; do
   sleep_t=10
 done
 set -e
+
+
 
 echo $server_pub_ip
 echo $server_priv_name
