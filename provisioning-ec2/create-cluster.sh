@@ -1,16 +1,17 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 5 ]; then
-  echo "Usage: ./create-cluster.sh <N_of_boxes> <box_type> <slave_mem> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 6 ]; then
+  echo "Usage: ./create-cluster.sh <N_of_boxes> <box_type> <slave_mem> <placement_group> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
 N=$1
 box_type=$2
 slave_mem=$3
-AWS_ACCESS_KEY_ID=$4
-AWS_SECRET_ACCESS_KEY=$5
+placement_group=$4
+AWS_ACCESS_KEY_ID=$5
+AWS_SECRET_ACCESS_KEY=$6
 
 cluster_name="spark${1}"
 master_security_group="sg-707d4d15"
@@ -27,9 +28,16 @@ if [ ! -f ~/.ssh/data-key.pem ]; then echo "~/.ssh/data-key.pem not found"; exit
 echo "~/.ssh/data-key.pem is found"
 set -e
 
+# CREATE PLACEMENT GROUP
+echo "Trying to create placement group: ${placement_group}"
+set +e
+aws ec2 create-placement-group --strategy cluster --group-name ${placement_group} --region us-west-2 --profile n_aws
+set -e
+echo "done"
+
 echo "Running create-server.sh"
 exec 5>&1
-create_master_out=$($DIR/create-server.sh ${box_type} ${master_security_group} | tee >(cat - >&5))
+create_master_out=$($DIR/create-server.sh ${box_type} ${master_security_group} ${placement_group} | tee >(cat - >&5))
 master_pub_ip=$(echo "$create_master_out" | tail -n2 | head -n1)
 master_priv_name=$(echo "$create_master_out" | tail -n1)
 echo "master_pub_ip: $master_pub_ip"
@@ -41,7 +49,7 @@ mkdir -p $DIR/../log-ec2
 echo "Schedule creating slaves"
 for i in $(seq 1 $N); do
   echo "Schedule creating slave dn$i"
-  cmd="$DIR/create-slave.sh $master_priv_name $box_type $slave_mem ${slave_security_group} $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
+  cmd="$DIR/create-slave.sh $master_priv_name $box_type $slave_mem ${slave_security_group} ${placement_group} $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
   nohup $cmd > $DIR/../log-ec2/create-slave-$cluster_name-$i.out 2>&1 < /dev/null &
 done
 echo "Schedule creating slaves done"

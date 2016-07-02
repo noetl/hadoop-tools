@@ -1,13 +1,14 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 2 ]; then
-  echo "Usage: ./create-server.sh <box_type> <security_group>"
+if [ $# -ne 3 ]; then
+  echo "Usage: ./create-server.sh <box_type> <security_group> <placement_group>"
   exit -1
 fi
 
 box_type=$1
 security_group=$2
+placement_group=$3
 
 cat > /tmp/aws-spec.json << EOL
 {
@@ -17,7 +18,8 @@ cat > /tmp/aws-spec.json << EOL
   "InstanceType": "${box_type}",
   "SubnetId": "subnet-2550fe52",
   "Placement": {
-    "AvailabilityZone": "us-west-2b"
+    "AvailabilityZone": "us-west-2b",
+    "GroupName": "${placement_group}"
   },
   "BlockDeviceMappings": [ {"VirtualName": "ephemeral0", "DeviceName": "/dev/xvdb"} ]
 }

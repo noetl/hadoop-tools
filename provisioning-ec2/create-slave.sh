@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 6 ]; then
-  echo "Usage: ./create-slave.sh <master_priv_name> <box_type> <slave_mem> <slave_security_group> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 7 ]; then
+  echo "Usage: ./create-slave.sh <master_priv_name> <box_type> <slave_mem> <slave_security_group> <placement_group> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
@@ -10,15 +10,16 @@ MASTER=$1
 box_type=$2
 slave_mem=$3
 slave_security_group=$4
-AWS_ACCESS_KEY_ID=$5
-AWS_SECRET_ACCESS_KEY=$6
+placement_group=$5
+AWS_ACCESS_KEY_ID=$6
+AWS_SECRET_ACCESS_KEY=$7
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 LOG_DIR=/tmp/log
 
 echo "Running create-server.sh"
 exec 5>&1
-create_server_out="$($DIR/create-server.sh ${box_type} ${slave_security_group} | tee >(cat - >&5))"
+create_server_out="$($DIR/create-server.sh ${box_type} ${slave_security_group} ${placement_group} | tee >(cat - >&5))"
 server_pub_ip=$(echo "$create_server_out" | tail -n2 | head -n1)
 echo "server_pub_ip: $server_pub_ip"
 ip=$server_pub_ip
