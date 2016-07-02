@@ -1,0 +1,46 @@
+<configuration>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs:///apps/tez/tez.tar.gz</value>
+    </property>
+
+    <property>
+        <name>tez.use.cluster.hadoop-libs</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>tez.am.grouping.max-size</name>
+        <value>134217728</value>
+    </property>
+
+    <property>
+        <name>tez.runtime.intermediate-output.should-compress</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>tez.runtime.intermediate-input.is-compressed</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>tez.runtime.intermediate-output.compress.codec</name>
+        <value>org.apache.hadoop.io.compress.LzoCodec</value>
+    </property>
+
+    <property>
+        <name>tez.runtime.intermediate-input.compress.codec</name>
+        <value>org.apache.hadoop.io.compress.LzoCodec</value>
+    </property>
+
+    <property>
+        <name>tez.history.logging.service.class</name>
+        <value>org.apache.tez.dag.history.logging.ats.ATSHistoryLoggingService</value>
+    </property>
+
+    <property>
+        <name>tez.tez-ui.history-url.base</name>
+        <value>${MASTER}:8080/tez-ui/</value>
+    </property>
+</configuration>

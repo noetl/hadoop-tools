@@ -40,5 +40,24 @@ echo "Installing Hadoop..."
 $DIR/install-hadoop.sh master ${MASTER} $slave_mem $slave_disk_cnt ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > $LOG_DIR/install-hadoop.log 2>&1
 echo "done"
 
+# wait for at least one active slave because TEZ needs to put jars to HDFS
+echo "Wait for at least one active slave"
+set +e
+nodesCnt=0
+sl=0
+while [ $nodesCnt == 0 ]; do
+  echo "sleep $sl"
+  sleep $sl
+  nodesCnt=$(curl -m 10 -s http://${MASTER}:8088/ws/v1/cluster/nodes | jq '.nodes.node | length')
+  echo "active slaves count: $nodesCnt"
+  sl=30
+done
+set -e
+
+# Install Hive and TEZ
+echo "Installing Hive..."
+$DIR/install-hive.sh ${MASTER} > $LOG_DIR/install-hive.log 2>&1
+echo "done"
+
 echo ""
 echo "All software installed successfully"
