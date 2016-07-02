@@ -14,7 +14,7 @@ AWS_ACCESS_KEY_ID=$5
 AWS_SECRET_ACCESS_KEY=$6
 
 YARN_MEM=$[$slave_mem*1024*87/100]
-
+echo "YARN_MEM: $YARN_MEM"
 my_hostname=$(hostname -f)
 
 host_disk_cnt=$slave_disk_cnt

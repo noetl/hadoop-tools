@@ -1,12 +1,20 @@
 #!/bin/bash
 set -e
 
+if [ $# -ne 2 ]; then
+  echo "Usage: ./create-server.sh <box_type> <security_group>"
+  exit -1
+fi
+
+box_type=$1
+security_group=$2
+
 cat > /tmp/aws-spec.json << EOL
 {
   "ImageId": "ami-f303fb93",
   "KeyName": "data-key",
-  "SecurityGroupIds": [ "sg-737d4d16" ],
-  "InstanceType": "r3.2xlarge",
+  "SecurityGroupIds": [ "${security_group}" ],
+  "InstanceType": "${box_type}",
   "SubnetId": "subnet-2550fe52",
   "Placement": {
     "AvailabilityZone": "us-west-2b"

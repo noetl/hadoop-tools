@@ -2,16 +2,16 @@
 
 set -e
 
-if [ $# -ne 3 ]; then
-  echo "Usage: ./install-master-soft.sh <N_of_boxes> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 4 ]; then
+  echo "Usage: ./install-master-soft.sh <N_of_boxes> <slave_mem> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
   exit -1
 fi
 
 N=$1
-slave_mem=60
+slave_mem=$2
 slave_disk_cnt=1
-AWS_ACCESS_KEY_ID=$2
-AWS_SECRET_ACCESS_KEY=$3
+AWS_ACCESS_KEY_ID=$3
+AWS_SECRET_ACCESS_KEY=$4
 
 LOG_DIR="/tmp/log"
 DIR="/tmp/provisioning-ec2"
