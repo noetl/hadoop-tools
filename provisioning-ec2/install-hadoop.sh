@@ -13,7 +13,6 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 mode=$2
 MASTER=$3
 
-YARN_MEM=$[$slave_mem*1024*87/100]
 echo "YARN_MEM: $YARN_MEM"
 
 echo "mode: $mode"

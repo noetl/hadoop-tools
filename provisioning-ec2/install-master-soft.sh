@@ -66,5 +66,10 @@ echo "Installing Spark..."
 $DIR/install-spark.sh ${json_conf_file} ${MASTER} > $LOG_DIR/install-spark.log 2>&1
 echo "done"
 
+# Install Spark Jobserver
+echo "Installing Spark Jobserver..."
+$DIR/install-spark-jobserver.sh ${json_conf_file} > $LOG_DIR/install-spark-jobserver.log 2>&1
+echo "done"
+
 echo ""
 echo "All software installed successfully"

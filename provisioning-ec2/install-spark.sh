@@ -10,12 +10,6 @@ json_conf_file=$1
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . $DIR/export-conf.sh $json_conf_file
 
-yarn_mem=$[slave_mem*1024*87/100]
-# 896 for AM + 24 for rounding issues
-spark_mem=$[yarn_mem-920]
-exec_mem=$[spark_mem*10/11]
-exec_cores=$slave_cores
-
 echo "yarn.nodemanager.resource.memory-mb ${yarn_mem}"
 echo "spark.executor.memory               ${exec_mem}m"
 echo "spark.executor.cores                ${slave_cores}"

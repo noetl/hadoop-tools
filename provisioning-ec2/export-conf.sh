@@ -19,3 +19,9 @@ export slave_security_group=$(jq -r ".slaveSecurityGroup" $1)
 
 export region=$(jq -r ".region" $1)
 export profile=$(jq -r ".profile" $1)
+
+export YARN_MEM=$[slave_mem*1024*87/100]
+# 896 for AM + 24 for rounding issues
+spark_mem=$[YARN_MEM-920]
+export exec_mem=$[spark_mem*10/11]
+export exec_cores=$slave_cores
