@@ -53,6 +53,6 @@ export SPARK_CONF_DIR=/etc/spark/conf
 export PATH=\$PATH:/usr/lib/spark/bin
 EOL'
 
-#echo "Starting spark history server...."
-#sudo su - hadoop -c '/usr/lib/spark/sbin/start-history-server.sh'
-#echo "Starting spark history server done"
+echo "Starting spark history server...."
+sudo su - hadoop -c '/usr/lib/spark/sbin/start-history-server.sh'
+echo "Starting spark history server done"
