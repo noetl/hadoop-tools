@@ -2,23 +2,25 @@
 
 set -e
 
-if [ $# -ne 4 ]; then
-  echo "Usage: ./install-master-soft.sh <N_of_boxes> <slave_mem> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 2 ]; then
+  echo "Usage: ./install-master-soft.sh <json_conf_file> <master_host_name>"
   exit -1
 fi
 
-N=$1
-slave_mem=$2
-slave_disk_cnt=1
-AWS_ACCESS_KEY_ID=$3
-AWS_SECRET_ACCESS_KEY=$4
+echo "Installing jq..."
+sudo yum -y install jq
+echo "Installing jq done"
+
+json_conf_file=$1
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. $DIR/export-conf.sh $json_conf_file
+
+MASTER=$2
 
 LOG_DIR="/tmp/log"
 DIR="/tmp/provisioning-ec2"
 
 mkdir -p $LOG_DIR
-
-MASTER=$(hostname -f)
 
 # Install JDK
 echo "Installing JDK..."
@@ -27,7 +29,7 @@ echo "done"
 
 # Install aws cli
 echo "Installing aws cli..."
-$DIR/install-aws.sh $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY > $LOG_DIR/install-aws.log 2>&1
+$DIR/install-aws.sh ${json_conf_file} > $LOG_DIR/install-aws.log 2>&1
 echo "done"
 
 # Install Zookeeper
@@ -37,7 +39,7 @@ echo "done"
 
 # Install Hadoop
 echo "Installing Hadoop..."
-$DIR/install-hadoop.sh master ${MASTER} $slave_mem $slave_disk_cnt ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} > $LOG_DIR/install-hadoop.log 2>&1
+$DIR/install-hadoop.sh ${json_conf_file} master ${MASTER} > $LOG_DIR/install-hadoop.log 2>&1
 echo "done"
 
 # wait for at least one active slave because TEZ needs to put jars to HDFS

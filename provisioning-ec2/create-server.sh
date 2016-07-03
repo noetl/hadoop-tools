@@ -2,13 +2,18 @@
 set -e
 
 if [ $# -ne 3 ]; then
-  echo "Usage: ./create-server.sh <box_type> <security_group> <placement_group>"
+  echo "Usage: ./create-server.sh <json-conf> <box_type> <security_group>"
   exit -1
 fi
 
-box_type=$1
-security_group=$2
-placement_group=$3
+echo ${1}
+
+json_conf_file=$1
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. $DIR/export-conf.sh $json_conf_file
+
+box_type=$2
+security_group=$3
 
 cat > /tmp/aws-spec.json << EOL
 {
@@ -30,7 +35,7 @@ spot_resp=$(aws ec2 request-spot-instances \
 --instance-count 1 \
 --launch-group spark_grp \
 --launch-specification file:///tmp/aws-spec.json \
---region us-west-2 --profile n_aws)
+--region ${region} --profile ${profile})
 
 requesId=$(echo $spot_resp | jq -r ".SpotInstanceRequests[0].SpotInstanceRequestId")
 echo "requesId: $requesId"
@@ -42,7 +47,7 @@ while [ $state != "active" ]; do
 
   spot_desc=$(aws ec2 describe-spot-instance-requests \
   --spot-instance-request-ids $requesId \
-  --region us-west-2 --profile n_aws)
+  --region us-west-2 --profile ${profile})
 
   state=$(echo $spot_desc | jq -r ".SpotInstanceRequests[0].State")
   echo "SpotInstanceRequest state: $state"
@@ -59,7 +64,7 @@ while [ $inst_state != "16" ]; do
 
   inst_desc=$(aws ec2 describe-instances \
   --instance-ids $instanceId \
-  --region us-west-2 --profile n_aws)
+  --region us-west-2 --profile ${profile})
 
   inst_state=$(echo $inst_desc | jq -r ".Reservations[0].Instances[0].State.Code")
   echo "Instance state code: $inst_state"

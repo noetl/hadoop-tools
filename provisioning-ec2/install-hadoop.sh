@@ -1,30 +1,23 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 6 ]; then
-  echo "Usage: ./install-hadoop.sh <mode> <master_hostname> <slave_mem> <slave_disk_cnt> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 3 ]; then
+  echo "Usage: ./install-hadoop.sh <json_conf_file> <mode> <master_hostname>"
   exit -1
 fi
 
-mode=$1
-MASTER=$2
-slave_mem=$3
-slave_disk_cnt=$4
-AWS_ACCESS_KEY_ID=$5
-AWS_SECRET_ACCESS_KEY=$6
+json_conf_file=$1
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. $DIR/export-conf.sh $json_conf_file
+
+mode=$2
+MASTER=$3
 
 YARN_MEM=$[$slave_mem*1024*87/100]
 echo "YARN_MEM: $YARN_MEM"
-my_hostname=$(hostname -f)
 
-host_disk_cnt=$slave_disk_cnt
-if [ "$mode" == "master" ]; then
-  host_disk_cnt=1
-fi
-
-echo "MASTER: $MASTER"
-echo "my_hostname: $my_hostname"
 echo "mode: $mode"
+echo "MASTER: $MASTER"
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 

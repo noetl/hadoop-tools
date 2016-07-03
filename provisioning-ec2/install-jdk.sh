@@ -8,9 +8,9 @@ if [ $# -ne 0 ]; then
 fi
 
 # Try to install software using yum.
-echo "Installing java-devel jq..."
-sudo yum -y install java-devel jq
-echo "Installing java-devel jq done"
+echo "Installing java-devel..."
+sudo yum -y install java-devel
+echo "Installing java-devel done"
 
 echo "Installed java version is...."
 java -version

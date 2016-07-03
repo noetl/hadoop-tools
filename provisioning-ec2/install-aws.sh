@@ -2,13 +2,14 @@
 
 set -e
 
-if [ $# -ne 2 ]; then
-  echo "Usage: ./install-aws.sh <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>"
+if [ $# -ne 1 ]; then
+  echo "Usage: ./install-aws.sh <json_conf_file>"
   exit -1
 fi
 
-AWS_ACCESS_KEY_ID=${1}
-AWS_SECRET_ACCESS_KEY=${2}
+json_conf_file=$1
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. $DIR/export-conf.sh $json_conf_file
 
 cat > /tmp/credentials << EOL
 [default]
