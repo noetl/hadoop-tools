@@ -37,6 +37,15 @@ echo "Installing Zookeeper..."
 $DIR/install-zookeeper.sh > $LOG_DIR/install-zookeeper.log 2>&1
 echo "done"
 
+echo "Installing Spark on slave..."
+echo "Downloading Spark...."
+cd /usr/lib
+sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/spark-slave.tar.gz .
+echo "Installing Spark...."
+sudo tar xzf spark-slave.tar.gz
+sudo rm -rf spark-slave.tar.gz
+echo "done"
+
 # Install Hadoop
 echo "Installing Hadoop..."
 $DIR/install-hadoop.sh ${json_conf_file} slave ${MASTER} > $LOG_DIR/install-hadoop.log 2>&1

@@ -1,3 +1,5 @@
+export HADOOP_CLASSPATH="$HADOOP_CLASSPATH:/usr/lib/spark/yarn/lib/spark-yarn-shuffle.jar"
+
 export YARN_OPTS="$YARN_OPTS -XX:OnOutOfMemoryError='kill -9 %p'"
 #export YARN_PROXYSERVER_HEAPSIZE=3338
 export YARN_NODEMANAGER_HEAPSIZE=2048

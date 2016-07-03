@@ -28,16 +28,12 @@ echo "Installing Hadoop...."
 sudo tar xzf hadoop.tar.gz
 sudo rm -rf hadoop.tar.gz
 
-echo "Downloading EMR"
-sudo mkdir -p /usr/share/aws/emr
-cd /usr/share/aws/emr
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/emrfs.tar.gz .
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/goodies.tar.gz .
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/s3-dist-cp.tar.gz .
-sudo tar xzf emrfs.tar.gz
-sudo tar xzf goodies.tar.gz
-sudo tar xzf s3-dist-cp.tar.gz
-sudo rm -rf emrfs.tar.gz goodies.tar.gz s3-dist-cp.tar.gz
+echo "Downloading share AWS"
+cd /usr/share
+sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/aws.tar.gz .
+sudo tar xzf aws.tar.gz
+sudo rm -rf aws.tar.gz
+echo "done"
 
 sudo mkdir -p /mnt/tmp /mnt/var/tmp /mnt/var/lib/hadoop/tmp
 sudo chmod 777 /mnt/tmp /mnt/var/tmp /mnt/var/lib/hadoop/tmp

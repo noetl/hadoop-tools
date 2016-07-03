@@ -61,5 +61,10 @@ echo "Installing Hive..."
 $DIR/install-hive.sh ${MASTER} > $LOG_DIR/install-hive.log 2>&1
 echo "done"
 
+# Install Spark
+echo "Installing Spark..."
+$DIR/install-spark.sh ${json_conf_file} ${MASTER} > $LOG_DIR/install-spark.log 2>&1
+echo "done"
+
 echo ""
 echo "All software installed successfully"
