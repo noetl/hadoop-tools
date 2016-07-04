@@ -71,5 +71,14 @@ echo "Installing Spark Jobserver..."
 $DIR/install-spark-jobserver.sh ${json_conf_file} > $LOG_DIR/install-spark-jobserver.log 2>&1
 echo "done"
 
+# Install HBase
+echo "Installing HBase..."
+$DIR/install-hbase.sh ${MASTER} master > $LOG_DIR/install-hbase.log 2>&1
+echo "done"
+
+echo "Installing HUE..."
+$DIR/install-hue.sh ${MASTER} > $LOG_DIR/install-hue.log 2>&1
+echo "done"
+
 echo ""
 echo "All software installed successfully"

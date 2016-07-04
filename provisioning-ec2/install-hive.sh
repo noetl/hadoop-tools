@@ -32,8 +32,11 @@ cd /usr/share/java
 sudo curl -f -O http://cdn.mysql.com/Downloads/Connector-J/mysql-connector-java-5.1.39.tar.gz
 sudo tar zxf mysql-connector-java-5.1.39.tar.gz
 sudo cp mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar /usr/lib/hive/lib/
-sudo cp mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar /usr/share/aws/emr/emrfs/auxlib/
+sudo cp mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar /usr/share/aws/emr/emrfs/auxlib
 sudo rm -rf mysql-connector-java-5.1.39.tar.gz
+
+cp /usr/lib/hive/lib/mysql-connector-java-5.1.39-bin.jar /usr/lib/spark
+/usr/lib/spark/yarn/lib/mysql-connector-java.jar
 
 # Try to install software using yum. For some reason first attempt might fail
 echo "Installing MySQL...."

@@ -52,9 +52,9 @@ $DIR/install-hadoop.sh ${json_conf_file} slave ${MASTER} > $LOG_DIR/install-hado
 echo "done"
 
 # Install HBase
-#echo "Installing HBase..."
-#$DIR/install-hbase.sh ${MASTER} > $LOG_DIR/install-hbase.log 2>&1
-#echo "done"
+echo "Installing HBase..."
+$DIR/install-hbase.sh ${MASTER} slave > $LOG_DIR/install-hbase.log 2>&1
+echo "done"
 
 echo ""
 echo "All software installed successfully"

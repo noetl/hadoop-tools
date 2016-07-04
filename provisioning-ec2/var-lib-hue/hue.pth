@@ -1,0 +1,12 @@
+/usr/lib/hue/apps/about/src
+/usr/lib/hue/apps/awssetup/src
+/usr/lib/hue/apps/beeswax/src
+/usr/lib/hue/apps/filebrowser/src
+/usr/lib/hue/apps/hbase/src
+/usr/lib/hue/apps/help/src
+/usr/lib/hue/apps/jobbrowser/src
+/usr/lib/hue/apps/jobsub/src
+/usr/lib/hue/apps/metastore/src
+/usr/lib/hue/apps/oozie/src
+/usr/lib/hue/apps/proxy/src
+/usr/lib/hue/apps/useradmin/src
