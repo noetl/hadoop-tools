@@ -12,12 +12,13 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Spark-jobserver...."
 cd /mnt/lib
-curl -f -O http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
-echo "Installing Spark-jobserver...."
-tar zxf spark-jobserver-0.6.1.tar.gz
-rm -rf spark-jobserver-0.6.1.tar.gz
-mv spark-jobserver-0.6.1 spark-jobserver
+mkdir spark-jobserver
 cd spark-jobserver
+curl -f -O http://www.noetl.io/spark-jobserver-0.6.2.tar.gz
+echo "Installing Spark-jobserver...."
+tar zxf spark-jobserver-0.6.2.tar.gz
+rm -rf spark-jobserver-0.6.2.tar.gz
+
 mkdir -p /mnt/var/log/spark-jobserver /mnt/var/spark-jobserver
 
 echo "Configuring Spark-jobserver...."

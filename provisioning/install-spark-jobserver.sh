@@ -14,10 +14,10 @@ echo "Downloading Spark-jobserver...."
 cd /usr/lib
 mkdir spark-jobserver
 cd spark-jobserver
-curl -f -O http://www.noetl.io/spark-jobserver-0.6.1.tar.gz
+curl -f -O http://www.noetl.io/spark-jobserver-0.6.2.tar.gz
 echo "Installing Spark-jobserver...."
-tar zxf spark-jobserver-0.6.1.tar.gz
-rm -rf spark-jobserver-0.6.1.tar.gz
+tar zxf spark-jobserver-0.6.2.tar.gz
+rm -rf spark-jobserver-0.6.2.tar.gz
 
 mkdir -p /data01/var/log/spark-jobserver /data01/var/spark-jobserver
 chown hadoop:hadoop /data01/var/log/spark-jobserver /data01/var/spark-jobserver
@@ -31,12 +31,12 @@ INSTALL_DIR=/usr/lib/spark-jobserver
 LOG_DIR=/data01/var/log/spark-jobserver
 PIDFILE=/data01/var/spark-jobserver/spark-jobserver.pid
 JOBSERVER_MEMORY=1G
-SPARK_VERSION=1.6.0
+SPARK_VERSION=1.6.1
 SPARK_HOME=/usr/lib/spark
 SPARK_CONF_DIR=/usr/lib/spark/conf
 HADOOP_CONF_DIR=/usr/lib/hadoop/etc/hadoop
 YARN_CONF_DIR=/usr/lib/hadoop/etc/hadoop
-SCALA_VERSION=2.10.5
+SCALA_VERSION=2.10.6
 EOL
 
 cat > emr.conf << EOL
