@@ -1,37 +1,41 @@
 # hadoop-tools
 tools and scripts to maintain hadoop &amp; spark environment
 
-# create cluster
-To create cluster run
+# create cluster on ctl.io
+To create cluster on ctl.io run
 ```
-. ./login.sh <login> <pass>
-
-./create-group.sh <group_name>
-
-./create-server.sh <group_id> nn <root_pass> 2 8
-./create-server.sh <group_id> dn2 <root_pass> 2 8
-
-./get-ip.sh <href1>
-./get-ip.sh <href2>
-
-# set-hostnames sets box hostname, adds records to /etc/hosts for all network IPs and prints box hostname
-ssh root@10.101.124.30 'bash -s' < set-hostnames.sh
-ssh root@10.101.124.31 'bash -s' < set-hostnames.sh
-
-# install hadoop needa MASTER hostname (not ip)
-ssh root@10.101.124.30 'bash -s' < install-hadoop.sh ip-10-101-124-30 <AWS_KEY> <AWS_SECRET_KEY>
-ssh root@10.101.124.31 'bash -s' < install-hadoop.sh ip-10-101-124-30 <AWS_KEY> <AWS_SECRET_KEY>
-
-ssh root@10.101.124.30 'bash -s' < install-hive.sh
-
-ssh root@10.101.124.30 'bash -s' < install-spark.sh
+provisioning/create-cluster.sh <ctl_login> <ctl_password> <group_name> \
+<N_of_boxes> <master_cpu> <master_mem> <slave_cpu> <slave_mem> \
+<slave_disk_cnt> <slave_disk_size> \
+<root_passwoed> <network_id> \
+<AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>
 ```
 
-# start/stop hadoop
-```
-ssh root@10.101.124.31 'bash -s' < hadoop-service ip-10-101-124-30 stop
-ssh root@10.101.124.30 'bash -s' < hadoop-service ip-10-101-124-30 stop
+# create cluster on Amazon EC2
+To create cluster on Amazon EC2
 
-ssh root@10.101.124.30 'bash -s' < hadoop-service ip-10-101-124-30 start
-ssh root@10.101.124.31 'bash -s' < hadoop-service ip-10-101-124-30 start
+create json config file in /tmp folder (e.g. /tmp/ec2-conf.json)
 ```
+{
+   "nOfBoxes": 6,
+   "masterBoxType": "r3.2xlarge",
+   "slaveBoxType": "r3.2xlarge",
+   "slaveMem": 61,
+   "slaveCores": 8,
+   "spotPrice": 2.99,
+   "placementGroup": "my_cluster_6",
+   "subnetId": "subnet-2550fe52",
+   "AWS_ACCESS_KEY_ID": "???",
+   "AWS_SECRET_ACCESS_KEY": "???",
+   "masterSecurityGroup": "sg-707d4d15",
+   "slaveSecurityGroup": "sg-737d4d16",
+   "region": "us-west-2",
+   "profile": "n_aws"
+}
+```
+
+run create-cluster command
+```
+provisioning-ec2/create-cluster.sh /tmp/ec2-conf.json
+```
+It takes about 3-5 min to create and provision master and slave boxes

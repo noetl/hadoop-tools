@@ -21,7 +21,7 @@ cat > /tmp/aws-spec.json << EOL
   "KeyName": "data-key",
   "SecurityGroupIds": [ "${security_group}" ],
   "InstanceType": "${box_type}",
-  "SubnetId": "subnet-2550fe52",
+  "SubnetId": "${subnet_id}",
   "Placement": {
     "AvailabilityZone": "us-west-2b",
     "GroupName": "${placement_group}"
@@ -31,7 +31,7 @@ cat > /tmp/aws-spec.json << EOL
 EOL
 
 spot_resp=$(aws ec2 request-spot-instances \
---spot-price 2.99 \
+--spot-price ${spot_price} \
 --instance-count 1 \
 --launch-group spark_grp \
 --launch-specification file:///tmp/aws-spec.json \
