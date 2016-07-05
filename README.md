@@ -39,3 +39,9 @@ run create-cluster command
 provisioning-ec2/create-cluster.sh /tmp/ec2-conf.json
 ```
 It takes about 3-5 min to create and provision master and slave boxes
+
+## stop EC2 cluster
+To stop EC2 cluster
+1. open Spot Requests on EC2 console
+2. search for placement group (e.g. my_cluster_6)
+3. select all requesrs and Actions -> Cancel spot request
