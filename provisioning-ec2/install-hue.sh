@@ -13,7 +13,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "MASTER: $MASTER"
 
 echo "Installing prerequisites..."
-sudo yum install -y gcc-c++ rsync gmp-devel krb5-devel \
+sudo yum install -y python26 gcc-c++ rsync gmp-devel krb5-devel \
   mysql openldap-devel \
   libtidy libxml2-devel libxslt-devel sqlite-devel \
   openssl-devel cyrus-sasl-devel cyrus-sasl-gssapi cyrus-sasl-plain
@@ -47,8 +47,8 @@ echo "Configuring HUE done"
 
 echo "Creating DB"
 sudo rm -rf /usr/lib/hue/desktop/desktop.db
-sudo -u hue /usr/lib/hue/build/env/bin/hue syncdb --noinput
-sudo -u hue /usr/lib/hue/build/env/bin/hue migrate
+sudo su - hue -c '/usr/lib/hue/build/env/bin/hue syncdb --noinput'
+sudo su - hue -c '/usr/lib/hue/build/env/bin/hue migrate'
 echo "Creating DB done"
 
 #cat > /tmp/create_huedb.sql << EOL
@@ -62,4 +62,4 @@ echo "Creating DB done"
 echo "Starting HUE..."
 sudo su - hue -c 'nohup /usr/lib/hue/build/env/bin/supervisor > /tmp/hue-supervisor.out < /dev/null &'
 echo "done"
-echo "HUE               http://${MASTER}:8888/"
+echo "HUE               http://${MASTER}:8888"

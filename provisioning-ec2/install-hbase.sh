@@ -45,7 +45,12 @@ if [ "$mode" == "master" ]; then
   echo "Starting HBase Master..."
   sudo su - hadoop -c '/usr/lib/hbase/bin/hbase-daemon.sh --config /etc/hbase/conf start master'
   echo "done"
-  echo "HBase Master     http://${MASTER}:16010"
+  echo "HBase Master      http://${MASTER}:16010"
+
+  echo "Starting HBase thrift"
+  sudo su - hadoop -c '/usr/lib/hbase/bin/hbase-daemon.sh --config /etc/hbase/conf start thrift'
+  echo "HBase thrift      ${MASTER}:9090"
+  echo "done"
 else
   echo "Starting HBase Regionserver..."
   sudo su - hadoop -c '/usr/lib/hbase/bin/hbase-daemon.sh --config /etc/hbase/conf start regionserver'
