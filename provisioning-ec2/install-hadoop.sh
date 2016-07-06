@@ -22,14 +22,14 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Downloading Hadoop...."
 cd /usr/lib
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/hadoop.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/hadoop.tar.gz .
 echo "Installing Hadoop...."
 sudo tar xzf hadoop.tar.gz
 sudo rm -rf hadoop.tar.gz
 
 echo "Downloading share AWS"
 cd /usr/share
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/aws.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/aws.tar.gz .
 sudo tar xzf aws.tar.gz
 sudo rm -rf aws.tar.gz
 echo "done"

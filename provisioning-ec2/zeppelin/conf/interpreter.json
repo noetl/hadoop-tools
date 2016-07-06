@@ -35,6 +35,9 @@
       "name": "hive",
       "group": "hive",
       "properties": {
+        "default.url": "jdbc:hive2://${MASTER}:10000",
+        "default.password": "",
+        "default.user": "hadoop",
         "hive.hiveserver2.url": "jdbc:hive2://${MASTER}:10000",
         "hive.hiveserver2.password": "",
         "hive.hiveserver2.user": "hadoop"
@@ -42,7 +45,7 @@
       "interpreterGroup": [
         {
           "class": "org.apache.zeppelin.hive.HiveInterpreter",
-          "name": "hive"
+          "name": "hql"
         }
       ],
       "option": {

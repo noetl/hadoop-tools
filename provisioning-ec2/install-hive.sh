@@ -14,14 +14,14 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Downloading Hive...."
 cd /usr/lib
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/hive.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/hive.tar.gz .
 echo "Installing Hive...."
 sudo tar xzf hive.tar.gz
 sudo rm -rf hive.tar.gz
 
 echo "Downloading Tez...."
 cd /usr/lib
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/tez.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/tez.tar.gz .
 echo "Installing Tez...."
 sudo tar xzf tez.tar.gz
 sudo rm -rf tez.tar.gz
@@ -86,8 +86,8 @@ sudo cp -R $DIR/tez /etc/
 
 #sudo su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /apps/tez'
 #cd /tmp
-#sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/tez-hdfs.tar.gz .
-#sudo su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -put /tmp/tez-hdfs.tar.gz /apps/tez/tez.tar.gz'
+#sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/apps/apps-tez-tez.tar.gz .
+#sudo su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -put /tmp/apps-tez-tez.tar.gz /apps/tez/tez.tar.gz'
 
 sudo su - hadoop -c 'cat >> ~/.bashrc << EOL
 export HIVE_CONF_DIR=/etc/hive/conf

@@ -2,12 +2,12 @@
 set -e
 
 if [ $# -ne 2 ]; then
-  echo "Usage: ./install-hbase.sh <master_hostname> <mode>"
+  echo "Usage: ./install-hbase.sh <mode> <master_hostname>"
   exit -1
 fi
 
-MASTER=$1
-mode=$2
+mode=$1
+MASTER=$2
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -16,7 +16,7 @@ echo "mode: $mode"
 
 echo "Downloading HBase...."
 cd /usr/lib
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/hbase.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/hbase.tar.gz .
 echo "Installing HBase...."
 sudo tar xzf hbase.tar.gz
 sudo rm -rf hbase.tar.gz

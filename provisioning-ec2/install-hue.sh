@@ -22,7 +22,7 @@ echo "All prerequisites were installed"
 
 echo "Downloading HUE...."
 cd /usr/lib
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/hue.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/hue.tar.gz .
 echo "Installing HUE...."
 sudo tar xzf hue.tar.gz
 sudo rm -rf hue.tar.gz

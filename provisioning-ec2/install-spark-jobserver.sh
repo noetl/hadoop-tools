@@ -13,7 +13,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "Downloading Spark-jobserver...."
 sudo mkdir /usr/lib/spark-jobserver
 cd /usr/lib/spark-jobserver
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/spark-jobserver-0.6.2.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/spark-jobserver-0.6.2.tar.gz .
 echo "Installing Spark-jobserver...."
 sudo tar zxf spark-jobserver-0.6.2.tar.gz
 sudo rm -rf spark-jobserver-0.6.2.tar.gz

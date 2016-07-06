@@ -32,15 +32,10 @@ echo "Installing aws cli..."
 $DIR/install-aws.sh ${json_conf_file} > $LOG_DIR/install-aws.log 2>&1
 echo "done"
 
-# Install Zookeeper
-echo "Installing Zookeeper..."
-$DIR/install-zookeeper.sh > $LOG_DIR/install-zookeeper.log 2>&1
-echo "done"
-
 echo "Installing Spark on slave..."
 echo "Downloading Spark...."
 cd /usr/lib
-sudo aws s3 cp s3://nomis-provisioning/emr-4.7.1/spark-slave.tar.gz .
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/spark-slave.tar.gz .
 echo "Installing Spark...."
 sudo tar xzf spark-slave.tar.gz
 sudo rm -rf spark-slave.tar.gz
@@ -53,7 +48,7 @@ echo "done"
 
 # Install HBase
 echo "Installing HBase..."
-$DIR/install-hbase.sh ${MASTER} slave > $LOG_DIR/install-hbase.log 2>&1
+$DIR/install-hbase.sh slave ${MASTER} > $LOG_DIR/install-hbase.log 2>&1
 echo "done"
 
 echo ""
