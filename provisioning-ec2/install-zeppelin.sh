@@ -13,6 +13,8 @@ MASTER=$1
 
 echo "MASTER: $MASTER"
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
 echo "Downloading Zeppelin...."
 cd /usr/lib
 sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/zeppelin.tar.gz .
