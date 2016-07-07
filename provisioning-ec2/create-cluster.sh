@@ -97,7 +97,7 @@ echo "SSH               ssh -i ~/.ssh/${key_name}.pem ec2-user@${master_pub_ip}"
 echo "SSH tunnel        ssh -i ~/.ssh/${key_name}.pem -N -D 8157 ec2-user@${master_pub_ip}"
 echo "TAG clusterId     ${clusterId}"
 echo "------------------------------------------------------------------------------------------"
-echo "Search Spot Requests / Instances by TAG ${clusterId} to cancel / terminate them"
+echo "Search for Spot Requests / Instances by TAG ${clusterId} to cancel / terminate them"
 echo "------------------------------------------------------------------------------------------"
 
 echo "Checking active slaves count"
