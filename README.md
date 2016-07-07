@@ -47,5 +47,5 @@ It takes about 3-5 min to create and provision master and slave boxes
 To stop EC2 cluster
 
 1. Open Spot Requests on EC2 console
-2. Search for placement group (e.g. my_cluster_6)
-3. Select all requesrs and Actions -> Cancel spot request
+2. Search Spot Requests by clusterId TAG"
+3. Select all requests and hit Actions -> Cancel spot request
