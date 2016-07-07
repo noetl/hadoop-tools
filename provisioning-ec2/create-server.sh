@@ -17,13 +17,13 @@ security_group=$3
 
 cat > /tmp/aws-spec.json << EOL
 {
-  "ImageId": "ami-f303fb93",
-  "KeyName": "data-key",
+  "ImageId": "${image_id}",
+  "KeyName": "${key_name}",
   "SecurityGroupIds": [ "${security_group}" ],
   "InstanceType": "${box_type}",
   "SubnetId": "${subnet_id}",
   "Placement": {
-    "AvailabilityZone": "us-west-2b",
+    "AvailabilityZone": "${availability_zone}",
     "GroupName": "${placement_group}"
   },
   "BlockDeviceMappings": [ {"VirtualName": "ephemeral0", "DeviceName": "/dev/xvdb"} ]
@@ -87,13 +87,11 @@ sleep_t=0
 while [ $ssh_code != "0" ]; do
   echo "sleep $sleep_t for server to settle down"
   sleep $sleep_t
-  ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$server_pub_ip exit
+  ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$server_pub_ip exit
   ssh_code=$?
   sleep_t=10
 done
 set -e
-
-
 
 echo $server_pub_ip
 echo $server_priv_name

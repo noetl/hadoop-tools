@@ -18,6 +18,7 @@ create json config file in /tmp folder (e.g. /tmp/ec2-conf.json)
 ```
 {
    "nOfBoxes": 6,
+   "imageId": "ami-f303fb93",
    "masterBoxType": "r3.2xlarge",
    "slaveBoxType": "r3.2xlarge",
    "slaveMem": 61,
@@ -27,8 +28,10 @@ create json config file in /tmp folder (e.g. /tmp/ec2-conf.json)
    "subnetId": "subnet-2550fe52",
    "AWS_ACCESS_KEY_ID": "???",
    "AWS_SECRET_ACCESS_KEY": "???",
+   "keyName": "data-key",
    "masterSecurityGroup": "sg-707d4d15",
    "slaveSecurityGroup": "sg-737d4d16",
+   "availabilityZone": "us-west-2b",
    "region": "us-west-2",
    "profile": "n_aws"
 }

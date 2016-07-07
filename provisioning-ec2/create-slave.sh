@@ -21,21 +21,21 @@ echo "server_pub_ip: $server_pub_ip"
 ip=$server_pub_ip
 
 echo "Copying provisioning scripts to $ip"
-scp -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $DIR ec2-user@$ip:/tmp/
-scp -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ${json_conf_file} ec2-user@$ip:${json_conf_file}
+scp -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $DIR ec2-user@$ip:/tmp/
+scp -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ${json_conf_file} ec2-user@$ip:${json_conf_file}
 echo "done"
 
 echo "Running mount-disks.sh"
 cmd="/tmp/provisioning-ec2/mount-disks.sh"
-ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
 echo "done"
 
 echo "Running add-users.sh"
 cmd="/tmp/provisioning-ec2/add-users.sh"
-ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
 echo "done"
 
 echo "Run install-slave-soft.sh on background"
 cmd="nohup /tmp/provisioning-ec2/install-slave-soft.sh ${json_conf_file} ${MASTER} > /tmp/log/install-slave-soft.log 2>&1 < /dev/null &"
-ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
 echo "done"

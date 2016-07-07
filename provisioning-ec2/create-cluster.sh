@@ -6,15 +6,6 @@ if [ $# -ne 1 ]; then
   exit -1
 fi
 
-set +e
-if ! type jq ; then echo "jq not found"; exit 1; fi
-echo "All required soft installed"
-if [ ! -f ~/.ssh/id_rsa.pub ]; then echo "~/.ssh/id_rsa.pub not found"; exit 1; fi
-echo "RSA public key is found at ~/.ssh/id_rsa.pub"
-if [ ! -f ~/.ssh/data-key.pem ]; then echo "~/.ssh/data-key.pem not found"; exit 1; fi
-echo "~/.ssh/data-key.pem is found"
-set -e
-
 # copy json conf file to /tmp
 json_conf_file=/tmp/$(basename $1)
 if [ $json_conf_file != $1 ]; then
@@ -25,6 +16,13 @@ echo "json conf file: $json_conf_file"
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . $DIR/export-conf.sh ${json_conf_file}
+
+set +e
+if ! type jq ; then echo "jq not found"; exit 1; fi
+echo "All required soft installed"
+if [ ! -f ~/.ssh/${key_name}.pem ]; then echo "~/.ssh/${key_name}.pem not found"; exit 1; fi
+echo "~/.ssh/${key_name}.pem is found"
+set -e
 
 cluster_name="spark${N}"
 
@@ -60,23 +58,23 @@ echo "Schedule creating slaves done"
 ip=$master_pub_ip
 
 echo "Copying provisioning scripts to $ip"
-scp -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $DIR ec2-user@$ip:/tmp/
-scp -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ${json_conf_file} ec2-user@$ip:${json_conf_file}
+scp -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $DIR ec2-user@$ip:/tmp/
+scp -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ${json_conf_file} ec2-user@$ip:${json_conf_file}
 echo "done"
 
 echo "Running mount-disks.sh"
 cmd="/tmp/provisioning-ec2/mount-disks.sh"
-ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
 echo "done"
 
 echo "Running add-users.sh"
 cmd="/tmp/provisioning-ec2/add-users.sh"
-ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
 echo "done"
 
 echo "Run install-master-soft.sh on background"
 cmd="nohup /tmp/provisioning-ec2/install-master-soft.sh ${json_conf_file} $master_priv_name > /tmp/log/install-master-soft.log 2>&1 < /dev/null &"
-ssh -i ~/.ssh/data-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
+ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@$ip $cmd
 echo "done"
 
 echo "------------------------------------------------------------------------------------------"
@@ -97,6 +95,24 @@ echo "HBase thrift      ${master_priv_name}:9090"
 echo "HUE               http://${master_priv_name}:8888"
 echo "Zeppelin          http://${master_priv_name}:8890"
 echo "------------------------------------------------------------------------------------------"
-echo "SSH               ssh -i ~/.ssh/data-key.pem ec2-user@${master_pub_ip}"
-echo "SSH tunnel        ssh -i ~/.ssh/data-key.pem -N -D 8157 ec2-user@${master_pub_ip}"
+echo "SSH               ssh -i ~/.ssh/${key_name}.pem ec2-user@${master_pub_ip}"
+echo "SSH tunnel        ssh -i ~/.ssh/${key_name}.pem -N -D 8157 ec2-user@${master_pub_ip}"
 echo "------------------------------------------------------------------------------------------"
+
+echo "Checking active slaves count"
+set +e
+nodesCnt=0
+sl=120
+while [ $nodesCnt -lt $N ]; do
+  echo "sleep $sl"
+  sleep $sl
+  cmd="curl -m 10 -s http://${master_priv_name}:8088/ws/v1/cluster/nodes | jq '.nodes.node | length'"
+  nodesCnt=$(ssh -q -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${master_pub_ip} $cmd)
+  echo "active slaves count: $nodesCnt"
+  sl=30
+done
+set -e
+
+if [ $nodesCnt -eq $N ]; then
+  echo "All slaves are active"
+fi
