@@ -82,7 +82,7 @@ echo "done"
 
 # Install Zeppelin
 echo "Installing Zeppelin..."
-$DIR/install-zeppelin.sh ${MASTER}} > $LOG_DIR/install-zeppelin.log 2>&1
+$DIR/install-zeppelin.sh ${MASTER} > $LOG_DIR/install-zeppelin.log 2>&1
 echo "done"
 
 echo ""
