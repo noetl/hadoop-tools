@@ -24,8 +24,6 @@ if [ ! -f ~/.ssh/${key_name}.pem ]; then echo "~/.ssh/${key_name}.pem not found"
 echo "~/.ssh/${key_name}.pem is found"
 set -e
 
-cluster_name="spark${N}"
-
 # CREATE PLACEMENT GROUP
 echo "Trying to create placement group: ${placement_group}"
 set +e
@@ -33,12 +31,12 @@ aws ec2 create-placement-group --strategy cluster --group-name ${placement_group
 set -e
 echo "done"
 
+clusterId=$(date +%Y%m%d-%H%M%S)
+echo "TAG clusterId: ${clusterId}"
+
 echo "Running create-server.sh"
 exec 5>&1
-create_master_out=$($DIR/create-server.sh ${json_conf_file} $master_box_type $master_security_group | tee >(cat - >&5))
-echo "-----------"
-echo "$create_master_out"
-echo "----------------"
+create_master_out=$($DIR/create-server.sh ${json_conf_file} $master_box_type $master_security_group $clusterId | tee >(cat - >&5))
 master_pub_ip=$(echo "$create_master_out" | tail -n2 | head -n1)
 master_priv_name=$(echo "$create_master_out" | tail -n1)
 echo "master_pub_ip: $master_pub_ip"
@@ -50,8 +48,8 @@ mkdir -p $DIR/../log-ec2
 echo "Schedule creating slaves"
 for i in $(seq 1 $N); do
   echo "Schedule creating slave dn$i"
-  cmd="$DIR/create-slave.sh ${json_conf_file} $master_priv_name"
-  nohup $cmd > $DIR/../log-ec2/create-slave-$cluster_name-$i.out 2>&1 < /dev/null &
+  cmd="$DIR/create-slave.sh ${json_conf_file} $master_priv_name $clusterId"
+  nohup $cmd > $DIR/../log-ec2/create-slave-$clusterId-$i.out 2>&1 < /dev/null &
 done
 echo "Schedule creating slaves done"
 
@@ -78,7 +76,7 @@ ssh -i ~/.ssh/${key_name}.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=
 echo "done"
 
 echo "------------------------------------------------------------------------------------------"
-echo "RUN SSH tunnel and use FoxyProxy in order to open private urls in browser!!!"
+echo "Run SSH tunnel and use FoxyProxy in order to open private urls in browser!!!"
 echo "------------------------------------------------------------------------------------------"
 echo "Resource Manager  http://${master_priv_name}:8088"
 echo "Namenode          http://${master_priv_name}:50070"
@@ -97,6 +95,9 @@ echo "Zeppelin          http://${master_priv_name}:8890"
 echo "------------------------------------------------------------------------------------------"
 echo "SSH               ssh -i ~/.ssh/${key_name}.pem ec2-user@${master_pub_ip}"
 echo "SSH tunnel        ssh -i ~/.ssh/${key_name}.pem -N -D 8157 ec2-user@${master_pub_ip}"
+echo "TAG clusterId     ${clusterId}"
+echo "------------------------------------------------------------------------------------------"
+echo "Search Spot Requests / Instances by TAG ${clusterId} to cancel / terminate them"
 echo "------------------------------------------------------------------------------------------"
 
 echo "Checking active slaves count"

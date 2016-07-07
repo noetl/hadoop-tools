@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 3 ]; then
-  echo "Usage: ./create-server.sh <json-conf> <box_type> <security_group>"
+if [ $# -ne 4 ]; then
+  echo "Usage: ./create-server.sh <json-conf> <box_type> <security_group> <clusterId>"
   exit -1
 fi
 
@@ -14,6 +14,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 box_type=$2
 security_group=$3
+clusterId=$4
 
 cat > /tmp/aws-spec.json << EOL
 {
@@ -33,12 +34,13 @@ EOL
 spot_resp=$(aws ec2 request-spot-instances \
 --spot-price ${spot_price} \
 --instance-count 1 \
---launch-group spark_grp \
 --launch-specification file:///tmp/aws-spec.json \
 --region ${region} --profile ${profile})
 
 requesId=$(echo $spot_resp | jq -r ".SpotInstanceRequests[0].SpotInstanceRequestId")
 echo "requesId: $requesId"
+
+aws ec2 create-tags --resources $requesId --tags Key=clusterId,Value=${clusterId} --region ${region} --profile ${profile}
 
 state="none"
 while [ $state != "active" ]; do
@@ -55,6 +57,8 @@ done
 
 instanceId=$(echo $spot_desc | jq -r ".SpotInstanceRequests[0].InstanceId")
 echo "instanceId: $instanceId"
+
+aws ec2 create-tags --resources $instanceId --tags Key=clusterId,Value=${clusterId} --region ${region} --profile ${profile}
 
 inst_state="none"
 sleep_t=0

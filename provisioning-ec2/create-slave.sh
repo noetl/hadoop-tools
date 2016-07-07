@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-if [ $# -ne 2 ]; then
-  echo "Usage: ./create-slave.sh <json_conf_file> <master_priv_name>"
+if [ $# -ne 3 ]; then
+  echo "Usage: ./create-slave.sh <json_conf_file> <master_priv_name> <clusterId>"
   exit -1
 fi
 
@@ -11,11 +11,12 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . $DIR/export-conf.sh $json_conf_file
 
 MASTER=$2
+clusterId=$3
 LOG_DIR=/tmp/log
 
 echo "Running create-server.sh"
 exec 5>&1
-create_server_out="$($DIR/create-server.sh ${json_conf_file} ${slave_box_type} ${slave_security_group} | tee >(cat - >&5))"
+create_server_out="$($DIR/create-server.sh ${json_conf_file} ${slave_box_type} ${slave_security_group} ${clusterId} | tee >(cat - >&5))"
 server_pub_ip=$(echo "$create_server_out" | tail -n2 | head -n1)
 echo "server_pub_ip: $server_pub_ip"
 ip=$server_pub_ip

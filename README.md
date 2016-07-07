@@ -24,7 +24,7 @@ create json config file in /tmp folder (e.g. /tmp/ec2-conf.json)
    "slaveMem": 61,
    "slaveCores": 8,
    "spotPrice": 2.99,
-   "placementGroup": "my_cluster_6",
+   "placementGroup": "spark",
    "subnetId": "subnet-2550fe52",
    "AWS_ACCESS_KEY_ID": "???",
    "AWS_SECRET_ACCESS_KEY": "???",
