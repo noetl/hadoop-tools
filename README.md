@@ -33,7 +33,7 @@ create json config file in /tmp folder (e.g. /tmp/ec2-conf.json)
    "slaveSecurityGroup": "sg-737d4d16",
    "availabilityZone": "us-west-2b",
    "region": "us-west-2",
-   "profile": "n_aws"
+   "profile": "default"
 }
 ```
 
