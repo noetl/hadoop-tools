@@ -41,6 +41,6 @@
 
     <property>
         <name>tez.tez-ui.history-url.base</name>
-        <value>${MASTER}:8080/tez-ui/</value>
+        <value>${MASTER}/tez-ui/</value>
     </property>
 </configuration>

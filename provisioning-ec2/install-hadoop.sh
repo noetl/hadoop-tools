@@ -93,10 +93,11 @@ fi
 
 echo "Configure env vars...."
 sudo su - hadoop -c 'cat >> ~/.bashrc << EOL
+export HADOOP_LIBEXEC_DIR=/usr/lib/hadoop/libexec
 export HADOOP_HOME=/usr/lib/hadoop
 export HADOOP_CONF_DIR=/etc/hadoop/conf
-HADOOP_COMMON_HOME=/usr/lib/hadoop
-export PATH=\$PATH:/usr/lib/hadoop/bin
+export HADOOP_COMMON_HOME=/usr/lib/hadoop
+export PATH=\$PATH:/usr/lib/hadoop/bin:/usr/lib/hadoop-hdfs/bin:/usr/lib/hadoop-yarn/bin:/usr/lib/hadoop-mapreduce/bin
 EOL'
 echo "done"
 

@@ -84,10 +84,10 @@ sudo cp -R $DIR/tez /etc/
 
 #echo "Configuring Tez...."
 
-#sudo su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /apps/tez'
-#cd /tmp
-#sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/apps/apps-tez-tez.tar.gz .
-#sudo su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -put /tmp/apps-tez-tez.tar.gz /apps/tez/tez.tar.gz'
+sudo su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -mkdir -p /apps/tez'
+cd /tmp
+sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/apps-tez-tez.tar.gz .
+sudo su - hadoop -c '/usr/lib/hadoop/bin/hadoop fs -put /tmp/apps-tez-tez.tar.gz /apps/tez/tez.tar.gz'
 
 sudo su - hadoop -c 'cat >> ~/.bashrc << EOL
 export HIVE_CONF_DIR=/etc/hive/conf
@@ -103,15 +103,14 @@ echo "done"
 echo "Hiveserver2       ${MASTER}:10000"
 echo
 
-#echo "Installing Tez-UI..."
-#yum install -y nginx
+echo "Installing Tez-UI..."
+sudo yum install -y nginx
 
-#mkdir -p /usr/share/nginx/html/tez-ui
-#cd /usr/share/nginx/html/tez-ui
+sudo mkdir -p /usr/share/nginx/html/tez-ui
+cd /usr/share/nginx/html/tez-ui
 
-#unzip /usr/lib/tez/tez-ui-0.8.3.war
+sudo unzip /usr/lib/tez/tez-ui-0.8.3.war
 
-
-#systemctl start nginx
-#echo "done"
-#echo "TEZ-UI            http://${MASTER}/tez-ui/"
+sudo service nginx start
+echo "done"
+echo "TEZ-UI            http://${MASTER}/tez-ui/"
