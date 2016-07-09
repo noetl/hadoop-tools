@@ -24,6 +24,9 @@ if [ ! -f ~/.ssh/${key_name}.pem ]; then echo "~/.ssh/${key_name}.pem not found"
 echo "~/.ssh/${key_name}.pem is found"
 set -e
 
+# check if aws works
+aws ec2 describe-regions --region-names ${region} --region ${region} --profile ${profile}
+
 # CREATE PLACEMENT GROUP
 echo "Trying to create placement group: ${placement_group}"
 set +e
