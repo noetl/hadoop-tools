@@ -17,7 +17,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Downloading Zeppelin...."
 cd /usr/lib
-sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/zeppelin.tar.gz .
+sudo curl -O https://s3-us-west-2.amazonaws.com/noetl-provisioning-us-west-2/emr-4.7.1/zeppelin.tar.gz
 echo "Installing Zeppelin...."
 sudo tar zxf zeppelin.tar.gz
 sudo rm -rf zeppelin.tar.gz

@@ -20,7 +20,7 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Spark...."
 cd /usr/lib
-sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/spark.tar.gz .
+sudo curl -O https://s3-us-west-2.amazonaws.com/noetl-provisioning-us-west-2/emr-4.7.1/spark.tar.gz
 echo "Installing Spark...."
 sudo tar xzf spark.tar.gz
 sudo rm -rf spark.tar.gz

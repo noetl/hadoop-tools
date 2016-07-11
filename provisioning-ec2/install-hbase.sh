@@ -16,7 +16,7 @@ echo "mode: $mode"
 
 echo "Downloading HBase...."
 cd /usr/lib
-sudo aws s3 cp s3://noetl-provisioning-us-west-2/emr-4.7.1/hbase.tar.gz .
+sudo curl -O https://s3-us-west-2.amazonaws.com/noetl-provisioning-us-west-2/emr-4.7.1/hbase.tar.gz
 echo "Installing HBase...."
 sudo tar xzf hbase.tar.gz
 sudo rm -rf hbase.tar.gz
