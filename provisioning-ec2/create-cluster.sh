@@ -108,7 +108,7 @@ echo "Checking active slaves count"
 set +e
 nodesCnt=0
 sl=120
-while [ $nodesCnt -lt $N ]; do
+while [ -z $nodesCnt ] || [ $nodesCnt -lt $N ]; do
   echo "sleep $sl"
   sleep $sl
   cmd="curl -m 10 -s http://${master_priv_name}:8088/ws/v1/cluster/nodes | jq '.nodes.node | length'"
