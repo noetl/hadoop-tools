@@ -46,8 +46,8 @@ sudo chmod 700 /mnt/namenode
 sed -i -e "s/\${MASTER}/${MASTER}/g" $DIR/hadoop/conf/core-site.xml
 sed -i -e "s/\${MASTER}/${MASTER}/g" $DIR/hadoop/conf/yarn-site.xml
 sed -i -e "s/\${MASTER}/${MASTER}/g" $DIR/hadoop/conf/mapred-site.xml
-sed -i -e "s/\${AWS_ACCESS_KEY_ID}/${AWS_ACCESS_KEY_ID}/g" $DIR/hadoop/conf/core-site.xml
-sed -i -e "s/\${AWS_SECRET_ACCESS_KEY}/${AWS_SECRET_ACCESS_KEY}/g" $DIR/hadoop/conf/core-site.xml
+sed -i -e "s \${AWS_ACCESS_KEY_ID} ${AWS_ACCESS_KEY_ID} g" $DIR/hadoop/conf/core-site.xml
+sed -i -e "s \${AWS_SECRET_ACCESS_KEY} ${AWS_SECRET_ACCESS_KEY} g" $DIR/hadoop/conf/core-site.xml
 
 sed -i -e "s/\${YARN_MEM}/${YARN_MEM}/g" $DIR/hadoop/conf/yarn-site.xml
 
