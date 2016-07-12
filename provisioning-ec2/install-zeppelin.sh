@@ -31,6 +31,7 @@ echo "Configuring Zeppelin...."
 
 # set MASTER and other variables in template
 sed -i -e "s/\${MASTER}/${MASTER}/g" $DIR/zeppelin/conf/interpreter.json
+sed -i -e "s/\${exec_mem}/${exec_mem}/g" $DIR/zeppelin/conf/interpreter.json
 
 sudo cp -R $DIR/zeppelin /etc/
 sudo chown -R hadoop:hadoop /etc/zeppelin/conf
