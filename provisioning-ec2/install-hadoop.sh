@@ -53,6 +53,8 @@ sed -i -e "s/\${YARN_MEM}/${YARN_MEM}/g" $DIR/hadoop/conf/yarn-site.xml
 
 sudo cp -R $DIR/hadoop /etc/
 
+sudo cp -R $DIR/emrfs/conf/emrfs-site.xml /usr/share/aws/emr/emrfs/conf/
+
 if [ "$mode" == "master" ]; then
   echo "Formatting HDFS...."
   sudo su - hadoop -c 'HADOOP_LIBEXEC_DIR=/usr/lib/hadoop/libexec /usr/lib/hadoop-hdfs/bin/hdfs namenode -format'

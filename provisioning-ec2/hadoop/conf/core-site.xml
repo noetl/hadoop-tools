@@ -130,5 +130,9 @@
         <value>org.apache.hadoop.fs.s3.S3FileSystem</value>
     </property>
 
+    <property>
+        <name>fs.s3n.server-side-encryption-algorithm</name>
+        <value>AES256</value>
+    </property>
 
 </configuration>

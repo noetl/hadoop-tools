@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+    <property>
+        <name>fs.s3.enableServerSideEncryption</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>fs.s3n.serverSideEncryptionAlgorithm</name>
+        <value>AES256</value>
+    </property>
+</configuration>
