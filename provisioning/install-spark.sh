@@ -23,7 +23,7 @@ MASTER=`hostname`
 echo "MASTER: $MASTER"
 
 echo "Downloading Spark...."
-spark_version="spark-1.6.1"
+spark_version="spark-1.6.2"
 cd /usr/lib
 curl -f -O http://download.nextag.com/apache/spark/${spark_version}/${spark_version}-bin-hadoop2.6.tgz
 echo "Installing Spark...."
