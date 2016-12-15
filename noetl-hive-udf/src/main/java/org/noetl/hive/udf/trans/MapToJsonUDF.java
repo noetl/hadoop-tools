@@ -14,7 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 
 /**
- * CREATE TEMPORARY  FUNCTION Map_to_json AS 'org.hive.udf.trans.MapToJsonUDF';
+ * CREATE TEMPORARY  FUNCTION Map_to_json AS 'org.noetl.hive.udf.trans.MapToJsonUDF';
  */
 
 @Description(name = "to_json_string", value = "_FUNC_(pars...) - Returns JsonString of all fields and values", extended = "Example:\n"
