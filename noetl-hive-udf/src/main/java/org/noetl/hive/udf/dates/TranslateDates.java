@@ -15,6 +15,7 @@ import org.joda.time.Days;
  */
 public class TranslateDates {
 
+
     static final String dateOutDefaultString = "0001-01-01";
 
     static final String dateDefaultPattern = "yyyy-MM-dd";
@@ -65,8 +66,9 @@ public class TranslateDates {
     } //  setLocDate
 
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param dateInString
+     * @param dateInFormat
+     * @return LocalDate
      */
     public static LocalDate setLocDate(String dateInString, String dateInFormat)   throws ParseException  {
         String date = dateInString;
@@ -77,15 +79,16 @@ public class TranslateDates {
     } //  setLocDate
 
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param locDate
+     * @return String LocalDate
      */
     public static String getLocDate(LocalDate locDate)  {
         return locDate.toString(dateDefaultPattern);
     } //  getLocDate
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param locDate
+     * @param dateFormat
+     * @return String LocalDate
      */
     public static String getLocDate(LocalDate locDate,String dateFormat )  {
         return locDate.toString(dateFormat);
@@ -96,7 +99,12 @@ public class TranslateDates {
         parsedDate = defaultDateFormat.parseDateTime(dateInString).toLocalDate();
         return	getLocDate(parsedDate,dateOutFormat);
     } //  dateFormat
-
+    /**
+     * @param dateInString
+     * @param dateInFormat
+     * @param dateOutFormat
+     * @return String dateFormat
+     */
     public static String dateFormat(String dateInString, String dateInFormat, String dateOutFormat)   throws ParseException  {
 //			String date = dateInString;
         LocalDate parsedDate;
@@ -110,29 +118,33 @@ public class TranslateDates {
     } //  dateFormat
 //=========================================================================================
     /**
-     * @param locDate, adddays
+     * @param locDate
+     * @param addDays
      * @return LocalDate as String
      */
-    public static String addDays(LocalDate locDate,int adddays )  {
-        return "" + locDate.plusDays(adddays);
+    public static String addDays(LocalDate locDate,int addDays )  {
+        return "" + locDate.plusDays(addDays);
     } //  getLocDate
     /**
-     * @param locDate, adddays
+     * @param locDate
+     * @param addWeeks
      * @return LocalDate as String
      */
-    public static String addWeeks(LocalDate locDate,int addweeks )  {
-        return "" + locDate.plusWeeks(addweeks);
+    public static String addWeeks(LocalDate locDate,int addWeeks )  {
+        return "" + locDate.plusWeeks(addWeeks);
     } //  getLocDate
     /**
-     * @param locDate, addMonth
+     * @param locDate
+     * @param addMonth
      * @return LocalDate as String
      */
-    public static String addMonths(LocalDate locDate,int addmonth )  {
-        return "" + locDate.plusMonths(addmonth);
+    public static String addMonths(LocalDate locDate,int addMonth )  {
+        return "" + locDate.plusMonths(addMonth);
     } //  getLocDate
 
     /**
-     * @param locDate, addMonth
+     * @param locDate
+     * @param addmonth
      * @return LocalDate as String
      */
     public static LocalDate getAddMonths(LocalDate locDate,int addmonth )  {
@@ -141,6 +153,7 @@ public class TranslateDates {
 
     /**
      * @param locDate
+     * @param dateFormat
      * @return LocalDate as String
      */
     public static String getMonthFirstLocDate(LocalDate locDate,String dateFormat)  {
@@ -148,7 +161,8 @@ public class TranslateDates {
     } //  getFirstLocDate
 
     /**
-     * @param locDate
+     * @param fromDateString
+     * @param toDateString
      * @return LocalDate as String
      */
     public static int getDaysDiff(String fromDateString,String toDateString)  {
@@ -173,7 +187,8 @@ public class TranslateDates {
         return locDate.dayOfMonth().withMinimumValue().toString(dateDefaultPattern);
     } //  getFirstLocDate
     /**
-     * @param locDate, dateFormat
+     * @param locDate
+     * @param dateFormat
      * @return LocalDate as String
      */
     public static String getMonthLastLocDate(LocalDate locDate,String dateFormat)  {
@@ -181,16 +196,16 @@ public class TranslateDates {
     } //  getLastLocDate
 
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param locDate
+     * @return String Last day of the month
      */
     public static String getMonthLastLocDate(LocalDate locDate)  {
         return locDate.dayOfMonth().withMaximumValue().toString(dateDefaultPattern);
     } //  getLastLocDate
 
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param locDate
+     * @return int Last day of the month
      */
     public static int getMonthLastDay(String locDate)  {
         try {
@@ -201,8 +216,8 @@ public class TranslateDates {
     } //  getLastLocDate
 
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param locDate
+     * @return int dd
      */
     public static int getMonthDay(String locDate)  {
         try {
@@ -214,15 +229,15 @@ public class TranslateDates {
 
     /**
      * @param locDate
-     * @return Year as String
+     * @return String "YYYY"
      */
     public static String getYear(LocalDate locDate)  {
         return "" + locDate.getYear();
     } //  getYear
 
     /**
-     * @param locDate
-     * @return Year as String
+     * @param dateInString
+     * @return int YYYY
      */
     public static int year(String dateInString) throws ParseException {
         LocalDate ld = setLocDate(dateInString);
@@ -231,7 +246,7 @@ public class TranslateDates {
 
     /**
      * @param locDate
-     * @return Month of Year as String
+     * @return String  MM
      */
     public static String getMonthOfYear(LocalDate locDate)  {
         return "" + locDate.getMonthOfYear();
@@ -240,8 +255,8 @@ public class TranslateDates {
     /**
      * gets month from date as int
      *
-     * @param date
-     * @return int month
+     * @param dateInString
+     * @return int MM
      */
     public static int month(String dateInString) throws ParseException {
         LocalDate ld = setLocDate(dateInString);
@@ -251,17 +266,18 @@ public class TranslateDates {
     /**
      * gets yearmonth from date as int
      *
-     * @param date
-     * @return int yearmonth
+     * @param dateInString
+     * @return int YYYYMM
      */
     public static int yrmon(String dateInString) throws ParseException {
         return year(dateInString) * 100 + month(dateInString);
     }
+
     /**
      * gets yearmonth from date as int
      *
-     * @param date
-     * @return int yearmonth
+     * @param dateInString
+     * @return int YYYYMM
      */
     public static String yearmon(String dateInString) throws ParseException {
         return "" + year(dateInString) * 100 + month(dateInString);
@@ -273,7 +289,7 @@ public class TranslateDates {
      * @param date
      * @param mon
      *            months to add
-     * @return int yearmonth
+     * @return int YYYYMM
      */
     public static int yrmon(String date, int mon) {
         int addmon, yyear;
@@ -292,7 +308,7 @@ public class TranslateDates {
      * @param date
      * @param mon
      *            months to add
-     * @return int yearmonth
+     * @return String "YYYYMM"
      */
     public static String yearmon(String date, int mon) {
         int addmon, yyear;
@@ -325,7 +341,7 @@ public class TranslateDates {
      *
      * @param date1
      * @param date2
-     * @return int months
+     * @return String months
      */
     public static String yearmon(String date1, String date2) {
         try {
@@ -336,7 +352,7 @@ public class TranslateDates {
     }
     /**
      * @param locDate
-     * @return Day of Month as String
+     * @return String Day of Month
      */
     public static String getDateOfMonth(LocalDate locDate)  {
         return "" + locDate.getDayOfMonth();
@@ -344,7 +360,7 @@ public class TranslateDates {
 
     /**
      * @param locDate
-     * @return Day of Year as String
+     * @return String Day of Year
      */
     public static String getDayOfYear(LocalDate locDate)  {
         return "" + locDate.getDayOfYear();
@@ -352,7 +368,7 @@ public class TranslateDates {
 
     /**
      * @param locDate
-     * @return Day of Week (1~7) as String
+     * @return String Day of Week (1~7)
      */
     public static String getDayOfWeek(LocalDate locDate)  {
         return "" + locDate.getDayOfWeek();
@@ -360,7 +376,7 @@ public class TranslateDates {
 
     /**
      * @param locDate
-     * @return Day of Week (1~7) as String
+     * @return Integer Day of Week (1~7)
      */
     public static Integer getDayOfMonth(LocalDate locDate)  {
         return locDate.getDayOfMonth() ;
@@ -368,29 +384,29 @@ public class TranslateDates {
 
     /**
      * @param locDate
-     * @return Day of Week (1~7) as String
+     * @return String Day of Week (1~7)
      */
     public static String getWeekOfWeekyear(LocalDate locDate)  {
         return "" + locDate.getWeekOfWeekyear();
     } //  getDayOfWeek
 
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param locDate
+     * @return String First Date of the Month
      */
     public static String getWeekFirstLocDate(LocalDate locDate)  {
         return locDate.dayOfWeek().withMinimumValue().toString(dateDefaultPattern);
     } //  getLastLocDate
     /**
-     * @param locDate, dateFormat
-     * @return LocalDate as String
+     * @param locDate
+     * @return String as last Date of the Month
      */
     public static String getWeekLastLocDate(LocalDate locDate)  {
         return locDate.dayOfWeek().withMaximumValue().toString(dateDefaultPattern);
     } //  getLastLocDate
     /**
      * @param locDate
-     * @return Quarter of Year as String
+     * @return String Quarter of Year
      */
     public static String getQuartOfYear(LocalDate locDate)  {
         return "" + (int)Math.floor(locDate.getMonthOfYear()/4 + 1);
@@ -398,7 +414,7 @@ public class TranslateDates {
 
     /**
      * @param locDate
-     * @return Week of Year as String
+     * @return String Week of Year
      */
     public static String getWeekOfYear(LocalDate locDate)  {
         return "" + locDate.getWeekOfWeekyear();
