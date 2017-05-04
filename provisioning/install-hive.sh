@@ -12,17 +12,18 @@ echo "MASTER: $MASTER"
 
 echo "Downloading Hive...."
 cd /usr/lib
-curl -f -O http://download.nextag.com/apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
+curl -f -O http://download.nextag.com/apache/hive/hive-1.2.2/apache-hive-1.2.2-bin.tar.gz
 echo "Installing Hive...."
-tar xzf apache-hive-1.2.1-bin.tar.gz
-mv apache-hive-1.2.1-bin hive
-rm -rf apache-hive-1.2.1-bin.tar.gz
+tar xzf apache-hive-1.2.2-bin.tar.gz
+mv apache-hive-1.2.2-bin hive
+rm -rf apache-hive-1.2.2-bin.tar.gz
 
 echo "Installing mysql-connector-java...."
-curl -f -O http://cdn.mysql.com/Downloads/Connector-J/mysql-connector-java-5.1.40.tar.gz
-tar zxf mysql-connector-java-5.1.40.tar.gz
-cp mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar /usr/lib/hive/lib/
-rm -rf mysql-connector-java-5.1.40 zxf mysql-connector-java-5.1.40.tar.gz
+curl -f -O http://download.softagency.net/MySQL/Downloads/Connector-J/mysql-connector-java-5.1.42.tar.gz
+#wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.42.tar.gz --will work too
+tar zxf mysql-connector-java-5.1.42.tar.gz
+cp mysql-connector-java-5.1.42/mysql-connector-java-5.1.42-bin.jar /usr/lib/hive/lib/
+rm -rf mysql-connector-java-5.1.42 zxf mysql-connector-java-5.1.42.tar.gz
 
 # Try to install software using yum. For some reason first attempt might fail
 echo "Installing MySQL...."
