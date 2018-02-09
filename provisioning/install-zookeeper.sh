@@ -7,12 +7,13 @@ if [ $# -ne 0 ]; then
 fi
 
 echo "Downloading Zookeeper...."
+zookeeper_version="3.4.11"
 cd /usr/lib
-curl -f -O http://download.nextag.com/apache/zookeeper/zookeeper-3.4.8/zookeeper-3.4.8.tar.gz
+curl -f -O http://download.nextag.com/apache/zookeeper/zookeeper-${zookeeper_version}/zookeeper-${zookeeper_version}.tar.gz
 echo "Installing Zookeeper...."
-tar xzf zookeeper-3.4.8.tar.gz
-mv zookeeper-3.4.8 zookeeper
-rm -rf zookeeper-3.4.8.tar.gz
+tar xzf zookeeper-${zookeeper_version}.tar.gz
+mv zookeeper-${zookeeper_version} zookeeper
+rm -rf zookeeper-${zookeeper_version}.tar.gz
 
 mkdir -p /data01/var/zookeeper /data01/var/log/zookeeper
 chown hadoop:hadoop /data01/var/zookeeper /data01/var/log/zookeeper

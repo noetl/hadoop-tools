@@ -30,12 +30,13 @@ echo "mode: $mode"
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Downloading Hadoop...."
+hadoop_version="2.6.5"
 cd /usr/lib
-curl -f -O http://download.nextag.com/apache/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
+curl -f -O http://download.nextag.com/apache/hadoop/common/hadoop-${hadoop_version}/hadoop-${hadoop_version}.tar.gz
 echo "Installing Hadoop...."
-tar xzf hadoop-2.6.4.tar.gz
-mv hadoop-2.6.4 hadoop
-rm -rf hadoop-2.6.4.tar.gz
+tar xzf hadoop-${hadoop_version}.tar.gz
+mv hadoop-${hadoop_version} hadoop
+rm -rf hadoop-${hadoop_version}.tar.gz
 
 # Hive uses jline v2. Lets remove old jline to avoid conflicts
 mv /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar /usr/lib/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar.delme
